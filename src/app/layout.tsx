@@ -1,8 +1,9 @@
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Nunito } from "next/font/google";
 import { getLocale } from "next-intl/server";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
-const fontSans = Inter({
+const fontSans = Nunito({
   variable: "--font-sans",
   subsets: ["latin", "vietnamese"],
   display: "swap",
@@ -22,11 +23,11 @@ export default async function RootLayout({
   const locale = await getLocale();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${fontSans.variable} ${fontMono.variable} min-h-dvh antialiased`}
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

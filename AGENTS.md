@@ -10,6 +10,7 @@
 2. `docs/I18N.md` — quy tắc copy, namespace, navigation có locale.
 3. `docs/FRONTEND.md` — UI/UX, Server vs Client Components.
 4. `docs/BACKEND.md` — Supabase, env, RLS, API nội bộ.
+5. `docs/UI_UX_PRO_MAX.md` — skill UI/UX Pro Max (Cursor), CLI `uipro`.
 
 ## Quy tắc bắt buộc
 

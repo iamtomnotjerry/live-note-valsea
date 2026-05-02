@@ -14,7 +14,7 @@ export function LocaleSwitcher() {
   return (
     <button
       type="button"
-      className="rounded-md border border-[var(--border)] bg-[var(--background)] px-2.5 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]"
+      className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-bold text-[var(--foreground)] shadow-sm transition-colors duration-200 hover:bg-[var(--muted)]"
       onClick={() => {
         router.replace(pathname, { locale: target });
       }}

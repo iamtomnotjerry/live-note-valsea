@@ -45,6 +45,7 @@ Sau đó mở [http://localhost:3000/live](http://localhost:3000/live) (tiếng 
 - **`docs/ARCHITECTURE.md`** — kiến trúc, thư mục, luồng middleware.
 - **`docs/FRONTEND.md`** — UI/UX, Tailwind, Server/Client.
 - **`docs/I18N.md`** — next-intl, `messages/*.json`, navigation có locale.
+- **`docs/UI_UX_PRO_MAX.md`** — skill UI/UX Pro Max cho Cursor (trong `.cursor/skills/`).
 - **`docs/BACKEND.md`** — Supabase, env, RLS, API.
 - **`docs/COMMITS.md`** — conventional commits.
 - **`docs/PRE_COMMIT.md`** — Husky, lint-staged.
