@@ -10,17 +10,18 @@ export default function HomePage() {
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-12 px-4 py-12 sm:px-6">
         <section className="space-y-6" aria-labelledby="hero-heading">
           <p className="text-sm font-medium uppercase tracking-wider text-[var(--muted-fg)]">
-            GhiLớp · VALSEA EdTech Hackathon
+            Live Note Taker · VALSEA Hackathon
           </p>
           <h1
             id="hero-heading"
             className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
           >
-            Nghe giảng — chữ hiện ngay. Ghi chép lớp học realtime với VALSEA.
+            Live Note Taker — ghi chép buổi học realtime, tối ưu cho sinh viên
+            Đông Nam Á.
           </h1>
           <p className="max-w-2xl text-pretty text-[var(--muted-fg)]">
-            Fullstack Next.js + Supabase + Vercel: TypeScript strict, tài liệu
-            trong{" "}
+            Tên dễ nhớ, demo rõ: nói vào micro → transcript hiện ngay (dev qua
+            VALSEA RTT). Stack chuẩn: TypeScript, Supabase, tài liệu trong{" "}
             <code className="rounded bg-[var(--muted)] px-1.5 py-0.5 font-mono text-xs">
               docs/
             </code>{" "}
@@ -28,7 +29,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Link className={buttonClassName("primary")} href="/live">
-              Bắt đầu GhiLớp
+              Mở ghi chép live
             </Link>
             <Link
               className={buttonClassName("secondary")}

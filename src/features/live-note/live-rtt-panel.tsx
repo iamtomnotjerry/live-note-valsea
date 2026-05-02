@@ -220,9 +220,9 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
     >
       <Card className="flex flex-col gap-4">
         <div>
-          <CardTitle>GhiLớp — RTT (WebSocket)</CardTitle>
+          <CardTitle>Live Note Taker · VALSEA RTT</CardTitle>
           <CardDescription>
-            Trình duyệt nối tới proxy cục bộ{" "}
+            Live Note Taker: trình duyệt nối proxy cục bộ{" "}
             <code className="rounded bg-[var(--muted)] px-1 font-mono text-xs">
               {DEFAULT_PROXY_WS}
             </code>

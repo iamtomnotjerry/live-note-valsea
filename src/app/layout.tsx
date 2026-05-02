@@ -16,11 +16,12 @@ const fontMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "GhiLớp — Nghe thầy, thấy chữ (VALSEA)",
-    template: "%s · GhiLớp",
+    default: "Live Note Taker — Ghi chép buổi học realtime",
+    template: "%s · Live Note Taker",
   },
   description:
-    "GhiLớp: ghi chép buổi học realtime bằng VALSEA ASR — demo EdTech hackathon.",
+    "Live Note Taker: ghi chép buổi học bằng giọng nói, transcript realtime với VALSEA ASR — Next.js, Supabase, Vercel.",
+  applicationName: "Live Note Taker",
 };
 
 export default function RootLayout({

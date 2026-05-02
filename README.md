@@ -1,6 +1,6 @@
-# GhiLớp
+# Live Note Taker
 
-**GhiLớp** — _nghe thầy, thấy chữ_: ghi chép buổi học **realtime** với **VALSEA ASR** (demo EdTech / hackathon). Stack: **Next.js 16**, **Supabase**, **Vercel**.
+Ứng dụng **ghi chép buổi học realtime** (tên dễ nhớ cho demo hackathon) — **Next.js 16**, **Supabase**, **Vercel**, tích hợp **VALSEA** speech-to-text.
 
 ## Bắt đầu
 
@@ -23,10 +23,6 @@ npm run dev:rtt
 ```
 
 Sau đó mở [http://localhost:3000/live](http://localhost:3000/live), bấm **Start recording**.
-
-### Tên trên Vercel (tuỳ chọn)
-
-Trong Vercel: **Project → Settings → General → Project Name** — đổi thành `ghi-lop` (hoặc `ghi-lop-valsea`) cho dễ nhớ và đồng bộ thương hiệu.
 
 **Lỗi WebSocket `ws://127.0.0.1:3331`:** trong terminal tab `proxy` phải thấy `listening` — nếu thấy `Thiếu VALSEA_API_KEY`, tạo/chỉnh file **`web/.env.local`** (cùng thư mục với `package.json`), thêm dòng `VALSEA_API_KEY=vl_...`, rồi chạy lại `npm run dev:rtt`.
 

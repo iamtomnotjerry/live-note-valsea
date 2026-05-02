@@ -6,7 +6,7 @@ Repo Git hiện gốc tại thư mục **`web/`** (cùng cấp với `package.js
 
 ### Tạo repo trống trên GitHub
 
-- [github.com/new](https://github.com/new) → đặt tên (ví dụ `ghi-lop` / `live-note-valsea`) → **không** tick “Add README” nếu đã có code local.
+- [github.com/new](https://github.com/new) → đặt tên (ví dụ `live-note-valsea`) → **không** tick “Add README” nếu đã có code local.
 
 ### Đẩy code từ máy (PowerShell)
 
@@ -14,7 +14,7 @@ Repo Git hiện gốc tại thư mục **`web/`** (cùng cấp với `package.js
 cd d:\valsea\web
 git status
 git add .
-git commit -m "chore: initial GhiLớp + VALSEA RTT"
+git commit -m "chore: initial Live Note + VALSEA RTT"
 git branch -M main
 git remote add origin https://github.com/<USER>/<REPO>.git
 git push -u origin main
@@ -32,6 +32,8 @@ gh repo create <REPO> --private --source=. --remote=origin --push
 ```
 
 ## 2. Vercel
+
+**Tên project (dễ nhớ khi demo):** trong Vercel → Project **Settings** → **General** → **Project Name**, đặt ví dụ `live-note-taker` (slug URL sẽ gọn hơn tên mặc định kiểu `web`).
 
 1. Đăng nhập [vercel.com](https://vercel.com) → **Add New…** → **Project** → **Import** repo GitHub vừa push.
 2. **Root Directory:** để trống (`.`) vì repo = nội dung `web/`.  

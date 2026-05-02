@@ -16,16 +16,17 @@ export function SiteHeader({ className }: SiteHeaderProps) {
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="text-sm font-semibold tracking-tight text-[var(--foreground)]"
+          className="max-w-[min(100%,14rem)] truncate text-sm font-semibold tracking-tight text-[var(--foreground)] sm:max-w-none"
+          title="Live Note Taker — ghi chép buổi học realtime"
         >
-          GhiLớp
+          Live Note Taker
         </Link>
         <nav aria-label="Chính" className="flex items-center gap-4 text-sm">
           <Link
             href="/live"
             className="text-[var(--muted-fg)] transition-colors hover:text-[var(--foreground)]"
           >
-            Ghi trực tiếp
+            Ghi chép live
           </Link>
           <Link
             href="https://valsea.ai/docs"
