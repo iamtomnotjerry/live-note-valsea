@@ -2,7 +2,7 @@
 
 ## Mục đích repo
 
-Ứng dụng web **Next.js 16 + React 19 + TypeScript (strict) + Tailwind + Supabase**, triển khai **Vercel**. Mục tiêu: code **dễ đọc, dễ bảo trì, dễ mở rộng**; mọi thay đổi kiến trúc phải phản ánh trong `docs/`.
+**GhiLớp** — sản phẩm ghi chép lớp realtime (VALSEA ASR). Stack: **Next.js 16 + React 19 + TypeScript (strict) + Tailwind + Supabase**, deploy **Vercel**. Mục tiêu: code **dễ đọc, dễ bảo trì, dễ mở rộng**; mọi thay đổi kiến trúc phản ánh trong `docs/`.
 
 ## Đọc gì trước khi sửa code
 

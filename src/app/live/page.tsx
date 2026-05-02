@@ -11,10 +11,10 @@ export default function LivePage() {
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              Live note — VALSEA RTT
+              GhiLớp — nghe thầy, thấy chữ
             </h1>
             <p className="mt-1 text-sm text-[var(--muted-fg)]">
-              WebSocket realtime + PCM 16 kHz. Dev: chạy{" "}
+              VALSEA RTT (WebSocket + PCM 16 kHz). Dev: chạy{" "}
               <code className="rounded bg-[var(--muted)] px-1 font-mono text-xs">
                 npm run dev:rtt
               </code>

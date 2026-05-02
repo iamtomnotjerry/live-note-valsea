@@ -1,10 +1,10 @@
 ---
-description: Quy ước dự án Live Note (Next.js + Supabase) — đọc khi sửa src/
+description: Quy ước dự án GhiLớp (Next.js + Supabase + VALSEA) — đọc khi sửa src/
 globs: src/**/*
 alwaysApply: false
 ---
 
-# VALSEA / Live Note — quy tắc code
+# GhiLớp (VALSEA) — quy tắc code
 
 - **Server Components mặc định.** `"use client"` chỉ khi cần browser APIs, hooks, events, hoặc `createSupabaseBrowserClient`.
 - **Env:** dùng `getPublicEnv()` từ `@/lib/env` cho `NEXT_PUBLIC_*`. Không thêm secret vào `NEXT_PUBLIC_`.

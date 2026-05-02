@@ -10,17 +10,17 @@ export default function HomePage() {
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-12 px-4 py-12 sm:px-6">
         <section className="space-y-6" aria-labelledby="hero-heading">
           <p className="text-sm font-medium uppercase tracking-wider text-[var(--muted-fg)]">
-            Next.js · Supabase · Vercel
+            GhiLớp · VALSEA EdTech Hackathon
           </p>
           <h1
             id="hero-heading"
             className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
           >
-            Ghi chép buổi học theo thời gian thực, sẵn sàng tích hợp VALSEA ASR.
+            Nghe giảng — chữ hiện ngay. Ghi chép lớp học realtime với VALSEA.
           </h1>
           <p className="max-w-2xl text-pretty text-[var(--muted-fg)]">
-            Khung dự án chuẩn hoá: TypeScript nghiêm ngặt, biến môi trường có
-            kiểm tra, Supabase Auth qua cookie, và tài liệu trong{" "}
+            Fullstack Next.js + Supabase + Vercel: TypeScript strict, tài liệu
+            trong{" "}
             <code className="rounded bg-[var(--muted)] px-1.5 py-0.5 font-mono text-xs">
               docs/
             </code>{" "}
@@ -28,7 +28,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Link className={buttonClassName("primary")} href="/live">
-              Mở Live RTT
+              Bắt đầu GhiLớp
             </Link>
             <Link
               className={buttonClassName("secondary")}

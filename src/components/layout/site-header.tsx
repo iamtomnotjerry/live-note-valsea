@@ -18,14 +18,14 @@ export function SiteHeader({ className }: SiteHeaderProps) {
           href="/"
           className="text-sm font-semibold tracking-tight text-[var(--foreground)]"
         >
-          Live Note
+          GhiLớp
         </Link>
         <nav aria-label="Chính" className="flex items-center gap-4 text-sm">
           <Link
             href="/live"
             className="text-[var(--muted-fg)] transition-colors hover:text-[var(--foreground)]"
           >
-            Live RTT
+            Ghi trực tiếp
           </Link>
           <Link
             href="https://valsea.ai/docs"

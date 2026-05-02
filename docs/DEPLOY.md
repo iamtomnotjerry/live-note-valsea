@@ -6,7 +6,7 @@ Repo Git hiện gốc tại thư mục **`web/`** (cùng cấp với `package.js
 
 ### Tạo repo trống trên GitHub
 
-- [github.com/new](https://github.com/new) → đặt tên (ví dụ `live-note-valsea`) → **không** tick “Add README” nếu đã có code local.
+- [github.com/new](https://github.com/new) → đặt tên (ví dụ `ghi-lop` / `live-note-valsea`) → **không** tick “Add README” nếu đã có code local.
 
 ### Đẩy code từ máy (PowerShell)
 
@@ -14,7 +14,7 @@ Repo Git hiện gốc tại thư mục **`web/`** (cùng cấp với `package.js
 cd d:\valsea\web
 git status
 git add .
-git commit -m "chore: initial Live Note + VALSEA RTT"
+git commit -m "chore: initial GhiLớp + VALSEA RTT"
 git branch -M main
 git remote add origin https://github.com/<USER>/<REPO>.git
 git push -u origin main
