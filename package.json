@@ -4,24 +4,49 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:proxy": "node scripts/valsea-rt-proxy.mjs",
+    "dev:rtt": "concurrently -n next,proxy -c blue,magenta \"next dev --turbopack\" \"node scripts/valsea-rt-proxy.mjs\"",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs,json,css,md}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "eslint --max-warnings 0"
+    ]
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.1.0"
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.105.1",
+    "clsx": "^2.1.1",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.4.2"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "@types/ws": "^8.18.1",
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
-    "eslint-config-next": "15.1.0",
-    "@eslint/eslintrc": "^3"
+    "eslint-config-next": "^16.2.4",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "postcss": "^8",
+    "prettier": "^3.8.3",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5",
+    "ws": "^8.20.0"
   }
 }

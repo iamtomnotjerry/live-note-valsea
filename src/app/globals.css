@@ -2,20 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Design tokens — keep contrast AA-friendly, support light/dark via media.
+  UI: generous spacing, clear hierarchy, Vietnamese-friendly line-height.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --muted: #f1f5f9;
+  --muted-fg: #64748b;
+  --border: #e2e8f0;
+  --ring: #2563eb;
+  --action: #0f172a;
+  --action-fg: #f8fafc;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #020617;
+    --foreground: #f1f5f9;
+    --surface: #0f172a;
+    --muted: #1e293b;
+    --muted-fg: #94a3b8;
+    --border: #334155;
+    --ring: #60a5fa;
+    --action: #f1f5f9;
+    --action-fg: #0f172a;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }

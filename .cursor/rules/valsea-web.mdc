@@ -1,0 +1,19 @@
+---
+description: Quy ước dự án Live Note (Next.js + Supabase) — đọc khi sửa src/
+globs: src/**/*
+alwaysApply: false
+---
+
+# VALSEA / Live Note — quy tắc code
+
+- **Server Components mặc định.** `"use client"` chỉ khi cần browser APIs, hooks, events, hoặc `createSupabaseBrowserClient`.
+- **Env:** dùng `getPublicEnv()` từ `@/lib/env` cho `NEXT_PUBLIC_*`. Không thêm secret vào `NEXT_PUBLIC_`.
+- **Supabase:** server → `@/lib/supabase/server`; client → `@/lib/supabase/client`. Không trộn trong cùng component.
+- **Styles:** token CSS trong `globals.css` (`--foreground`, `--action`, …); gom class bằng `cn()` từ `@/lib/utils`.
+- **UI:** primitives trong `components/ui/`; không nhúng logic domain nặng vào ui primitives.
+- **API bên thứ ba (VALSEA, LLM):** ưu tiên `app/api/**/route.ts` nếu cần giấu key.
+- **Mở rộng:** feature lớn → `src/features/<name>/` (components, actions, types).
+- **Tài liệu:** thay đổi kiến trúc → cập nhật `docs/ARCHITECTURE.md` (và BACKEND/FRONTEND nếu liên quan).
+- **Commit:** conventional commits — xem `docs/COMMITS.md`.
+
+Chi tiết cho human/agent: `AGENTS.md`.
