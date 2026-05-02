@@ -2,8 +2,8 @@
  * Local WebSocket proxy: browser -> this server -> wss://api.valsea.ai/v1/realtime
  * Browsers cannot set Authorization / X-API-Key on WebSocket; Node can.
  *
- * Usage: npm run dev:proxy
- * Env: VALSEA_API_KEY (from .env.local), VALSEA_RT_PROXY_PORT (default 3331)
+ * Usage: npm run dev:proxy  |  production: PORT từ host (Railway), VALSEA_API_KEY bắt buộc
+ * Env: VALSEA_API_KEY; local: VALSEA_RT_PROXY_PORT (default 3331); prod: PORT do platform gán
  */
 import { existsSync } from "fs";
 import { config } from "dotenv";
@@ -18,27 +18,30 @@ const envFile = resolve(repoRoot, ".env");
 
 if (existsSync(envLocal)) {
   config({ path: envLocal });
-} else {
-  console.warn(
-    `[valsea-rt-proxy] Không thấy ${envLocal} — tạo file này và thêm VALSEA_API_KEY=vl_...`,
-  );
 }
 if (existsSync(envFile)) {
   config({ path: envFile });
 }
 
 const UPSTREAM = "wss://api.valsea.ai/v1/realtime";
-const PORT = Number(process.env.VALSEA_RT_PROXY_PORT || "3331");
+/** Railway/Fly/Render inject PORT (ưu tiên); local: VALSEA_RT_PROXY_PORT hoặc 3331 */
+const portStr =
+  (process.env.PORT && String(process.env.PORT).trim()) ||
+  (process.env.VALSEA_RT_PROXY_PORT &&
+    String(process.env.VALSEA_RT_PROXY_PORT).trim()) ||
+  "3331";
+const PORT = Number(portStr);
+const LISTEN_HOST = process.env.VALSEA_RT_PROXY_HOST || "0.0.0.0";
 const apiKey = process.env.VALSEA_API_KEY?.trim();
 
 if (!apiKey) {
   console.error(
-    "[valsea-rt-proxy] Thiếu VALSEA_API_KEY. Thêm vào web/.env.local:\n  VALSEA_API_KEY=vl_...\n(File phải nằm trong thư mục web/, cùng cấp package.json.)",
+    "[valsea-rt-proxy] Thiếu VALSEA_API_KEY.\n  Local: web/.env.local hoặc web/.env (cùng cấp package.json).\n  Render/Railway: Environment → VALSEA_API_KEY=vl_...",
   );
   process.exit(1);
 }
 
-const wss = new WebSocketServer({ port: PORT });
+const wss = new WebSocketServer({ port: PORT, host: LISTEN_HOST });
 
 wss.on("connection", (client) => {
   const upstream = new WebSocket(UPSTREAM, {
@@ -89,6 +92,6 @@ wss.on("connection", (client) => {
 
 wss.on("listening", () => {
   console.log(
-    `[valsea-rt-proxy] ws://127.0.0.1:${PORT} -> ${UPSTREAM} (Bearer ***)`,
+    `[valsea-rt-proxy] ws://${LISTEN_HOST}:${PORT} -> ${UPSTREAM} (Bearer ***)`,
   );
 });

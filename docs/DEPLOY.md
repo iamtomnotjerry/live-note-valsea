@@ -59,7 +59,7 @@ gh repo create <REPO> --private --source=. --remote=origin --push
 
 - `npm run dev:rtt` chỉ chạy **proxy cục bộ** (`node scripts/valsea-rt-proxy.mjs`). **Vercel không chạy** process WebSocket lâu dài kiểu đó trên cùng một deploy mặc định.
 - Trên production, bạn cần một trong các hướng:
-  - Host proxy tại dịch vụ có WebSocket (Railway, Fly.io, VPS…), rồi đặt `NEXT_PUBLIC_VALSEA_RT_PROXY_URL` trỏ tới URL đó; hoặc
+  - Host proxy tại dịch vụ có WebSocket (**Render** khuyến nghị cho free tier: [`RENDER.md`](./RENDER.md); hoặc Railway, Fly.io, VPS…), rồi đặt `NEXT_PUBLIC_VALSEA_RT_PROXY_URL` trỏ tới URL **`wss://…`**; hoặc
   - Dùng **REST** `POST /v1/audio/transcriptions` qua Route Handler (không cần WS proxy) — độ trễ khác RTT dev.
 
 Chi tiết backend: [`BACKEND.md`](./BACKEND.md).
@@ -77,4 +77,4 @@ Chi tiết backend: [`BACKEND.md`](./BACKEND.md).
 - [ ] Vercel import repo + env Supabase + `VALSEA_API_KEY`.
 - [ ] Supabase project + (tuỳ chọn) `schema.sql`.
 - [ ] i18n: mặc định `/` tiếng Việt, English `/en` — quy ước copy trong [`I18N.md`](./I18N.md).
-- [ ] Hiểu giới hạn RTT proxy trên Vercel; lên kế hoạch proxy riêng hoặc REST.
+- [ ] Hiểu giới hạn RTT proxy trên Vercel; proxy public (ví dụ [Render](./RENDER.md)) hoặc REST.

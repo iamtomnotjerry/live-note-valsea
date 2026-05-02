@@ -53,7 +53,8 @@ Sau đó mở [http://localhost:3000/live](http://localhost:3000/live) (tiếng 
 
 ## GitHub · Vercel · Supabase
 
-Hướng dẫn đầy đủ: [`docs/DEPLOY.md`](docs/DEPLOY.md) · Supabase: [`docs/SUPABASE.md`](docs/SUPABASE.md).
+Hướng dẫn đầy đủ: [`docs/DEPLOY.md`](docs/DEPLOY.md) · Supabase: [`docs/SUPABASE.md`](docs/SUPABASE.md).  
+**Proxy RTT production (Render):** [`docs/RENDER.md`](docs/RENDER.md) · tuỳ chọn Railway: [`docs/RAILWAY.md`](docs/RAILWAY.md).
 
 Tóm tắt:
 
