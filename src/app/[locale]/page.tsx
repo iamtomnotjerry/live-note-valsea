@@ -1,44 +1,45 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/site-header";
 import { buttonClassName } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Link } from "@/i18n/navigation";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const t = await getTranslations("Home");
+
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-12 px-4 py-12 sm:px-6">
         <section className="space-y-6" aria-labelledby="hero-heading">
           <p className="text-sm font-medium uppercase tracking-wider text-[var(--muted-fg)]">
-            Live Note Taker · VALSEA Hackathon
+            {t("kicker")}
           </p>
           <h1
             id="hero-heading"
             className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
           >
-            Live Note Taker — ghi chép buổi học realtime, tối ưu cho sinh viên
-            Đông Nam Á.
+            {t("headline")}
           </h1>
           <p className="max-w-2xl text-pretty text-[var(--muted-fg)]">
-            Tên dễ nhớ, demo rõ: nói vào micro → transcript hiện ngay (dev qua
-            VALSEA RTT). Stack chuẩn: TypeScript, Supabase, tài liệu trong{" "}
+            {t("subBefore")}{" "}
             <code className="rounded bg-[var(--muted)] px-1.5 py-0.5 font-mono text-xs">
               docs/
             </code>{" "}
-            để Cursor và đội ngũ đọc cùng một bản đồ.
+            {t("subAfter")}
           </p>
           <div className="flex flex-wrap gap-3">
             <Link className={buttonClassName("primary")} href="/live">
-              Mở ghi chép live
+              {t("ctaLive")}
             </Link>
-            <Link
+            <a
               className={buttonClassName("secondary")}
               href="https://valsea.ai/docs"
               rel="noopener noreferrer"
               target="_blank"
             >
-              Tài liệu VALSEA
-            </Link>
+              {t("ctaDocs")}
+            </a>
           </div>
         </section>
 
@@ -47,23 +48,15 @@ export default function HomePage() {
           aria-labelledby="stack-heading"
         >
           <h2 id="stack-heading" className="sr-only">
-            Kiến trúc kỹ thuật
+            {t("stackTitle")}
           </h2>
           <Card>
-            <CardTitle>Frontend</CardTitle>
-            <CardDescription>
-              App Router, Server Components mặc định, Client Components khi cần
-              tương tác. Tiện ích{" "}
-              <span className="font-mono text-xs">cn()</span> gom class
-              Tailwind.
-            </CardDescription>
+            <CardTitle>{t("cardFrontendTitle")}</CardTitle>
+            <CardDescription>{t("cardFrontendBody")}</CardDescription>
           </Card>
           <Card>
-            <CardTitle>Backend & dữ liệu</CardTitle>
-            <CardDescription>
-              Supabase (Postgres + Auth). Client server-side và browser tách
-              file; middleware làm mới session.
-            </CardDescription>
+            <CardTitle>{t("cardBackendTitle")}</CardTitle>
+            <CardDescription>{t("cardBackendBody")}</CardDescription>
           </Card>
         </section>
       </main>

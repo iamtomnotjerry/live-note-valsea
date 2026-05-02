@@ -22,7 +22,9 @@ Trình duyệt cần **proxy cục bộ** để gắn Bearer khi bắt tay WebSo
 npm run dev:rtt
 ```
 
-Sau đó mở [http://localhost:3000/live](http://localhost:3000/live), bấm **Start recording**.
+Sau đó mở [http://localhost:3000/live](http://localhost:3000/live) (tiếng Việt mặc định) hoặc [http://localhost:3000/en/live](http://localhost:3000/en/live) (English), bấm nút bắt đầu ghi trên UI.
+
+**Đa ngôn ngữ:** dùng nút trên header hoặc prefix `/en`. Chi tiết: [`docs/I18N.md`](docs/I18N.md).
 
 **Lỗi WebSocket `ws://127.0.0.1:3331`:** trong terminal tab `proxy` phải thấy `listening` — nếu thấy `Thiếu VALSEA_API_KEY`, tạo/chỉnh file **`web/.env.local`** (cùng thư mục với `package.json`), thêm dòng `VALSEA_API_KEY=vl_...`, rồi chạy lại `npm run dev:rtt`.
 
@@ -42,6 +44,7 @@ Sau đó mở [http://localhost:3000/live](http://localhost:3000/live), bấm **
 - **`AGENTS.md`** — quy tắc cho Cursor / AI và người mới vào dự án.
 - **`docs/ARCHITECTURE.md`** — kiến trúc, thư mục, luồng middleware.
 - **`docs/FRONTEND.md`** — UI/UX, Tailwind, Server/Client.
+- **`docs/I18N.md`** — next-intl, `messages/*.json`, navigation có locale.
 - **`docs/BACKEND.md`** — Supabase, env, RLS, API.
 - **`docs/COMMITS.md`** — conventional commits.
 - **`docs/PRE_COMMIT.md`** — Husky, lint-staged.

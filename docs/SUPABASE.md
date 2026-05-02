@@ -6,7 +6,7 @@ App đã cấu hình `@supabase/ssr`:
 
 - Client (browser): [`src/lib/supabase/client.ts`](../src/lib/supabase/client.ts)
 - Server: [`src/lib/supabase/server.ts`](../src/lib/supabase/server.ts)
-- Middleware làm mới session: [`src/middleware.ts`](../src/middleware.ts)
+- Middleware: next-intl + làm mới session Supabase — [`src/middleware.ts`](../src/middleware.ts) gọi `updateSession(request, response)` với response từ intl (xem [`docs/ARCHITECTURE.md`](./ARCHITECTURE.md)).
 
 Biến bắt buộc (Zod trong [`src/lib/env.ts`](../src/lib/env.ts) khi gọi `getPublicEnv()`):
 

@@ -22,13 +22,14 @@
 
 ### `scope` (tùy chọn)
 
-Ngắn gọn theo khu vực: `auth`, `notes`, `api`, `ui`, `supabase`, …
+Ngắn gọn theo khu vực: `auth`, `notes`, `api`, `ui`, `supabase`, `i18n` (copy trong `messages/`), …
 
 ### Ví dụ
 
 - `feat(notes): add session list page`
 - `fix(supabase): refresh cookies in middleware`
 - `chore: bump next to 16.2.4`
+- `feat(i18n): add LocaleSwitcher strings for exam mode`
 
 ## Nguyên tắc
 

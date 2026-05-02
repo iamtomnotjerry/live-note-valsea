@@ -1,0 +1,61 @@
+{
+  "Meta": {
+    "title": "Live Note Taker — Ghi chép buổi học realtime",
+    "titleTemplate": "%s · Live Note Taker",
+    "description": "Live Note Taker: ghi chép buổi học bằng giọng nói, transcript realtime với VALSEA ASR — Next.js, Supabase, Vercel."
+  },
+  "LocaleSwitcher": {
+    "label": "Ngôn ngữ",
+    "vi": "Tiếng Việt",
+    "en": "English"
+  },
+  "Header": {
+    "brandTitle": "Live Note Taker",
+    "navLabel": "Chính",
+    "live": "Ghi chép live",
+    "valseaApi": "VALSEA API"
+  },
+  "Home": {
+    "kicker": "Live Note Taker · VALSEA Hackathon",
+    "headline": "Live Note Taker — ghi chép buổi học realtime, tối ưu cho sinh viên Đông Nam Á.",
+    "subBefore": "Tên dễ nhớ, demo rõ: nói vào micro → transcript hiện ngay (dev qua VALSEA RTT). Stack chuẩn: TypeScript, Supabase, thư mục",
+    "subAfter": "để Cursor và đội ngũ đọc cùng một bản đồ.",
+    "ctaLive": "Mở ghi chép live",
+    "ctaDocs": "Tài liệu VALSEA",
+    "stackTitle": "Kiến trúc kỹ thuật",
+    "cardFrontendTitle": "Frontend",
+    "cardFrontendBody": "App Router, Server Components mặc định, Client Components khi cần tương tác. Tiện ích cn() gom class Tailwind.",
+    "cardBackendTitle": "Backend & dữ liệu",
+    "cardBackendBody": "Supabase (Postgres + Auth). Client server-side và browser tách file; middleware làm mới session."
+  },
+  "LivePage": {
+    "title": "Live Note Taker — transcript realtime",
+    "subtitleBefore": "VALSEA RTT (WebSocket + PCM 16 kHz). Dev: chạy",
+    "subtitleAfter": ", rồi bấm Bắt đầu ghi.",
+    "backHome": "← Trang chủ"
+  },
+  "Rtt": {
+    "cardTitle": "Live Note Taker · VALSEA RTT",
+    "cardDescBefore": "Trình duyệt nối proxy cục bộ",
+    "cardDescMid": "; proxy gắn Bearer tới",
+    "cardDescAfter": ". PCM 16 kHz mono theo tài liệu VALSEA.",
+    "transcriptTitle": "Live transcript",
+    "transcriptHint": "Partial thay đổi theo thời gian; chỉ final được ghép vào lịch sử (theo khuyến nghị VALSEA).",
+    "start": "Bắt đầu ghi",
+    "stop": "Dừng",
+    "emptyHintBefore": "Chưa có nội dung. Chạy",
+    "emptyHintAfter": ", bấm Bắt đầu ghi, nói vào micro.",
+    "statusReady": "Sẵn sàng.",
+    "statusStopped": "Đã dừng.",
+    "statusDisconnected": "Mất kết nối.",
+    "statusConnecting": "Đang kết nối WebSocket…",
+    "statusWsOpen": "WebSocket mở. Chờ session.created…",
+    "statusSessionCreated": "Đã tạo phiên. Gửi session.start…",
+    "statusEngineReady": "Engine sẵn sàng. Bật micro…",
+    "statusRecording": "Đang thu âm → VALSEA RTT.",
+    "errNoGetUserMedia": "Trình duyệt không hỗ trợ getUserMedia.",
+    "errMicOpen": "Không mở được micro.",
+    "errValseaGeneric": "Lỗi VALSEA RTT",
+    "errWs": "Lỗi WebSocket tới {url}. Chạy \"npm run dev:rtt\" và kiểm tra VALSEA_API_KEY trong .env.local."
+  }
+}

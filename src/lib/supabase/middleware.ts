@@ -4,15 +4,20 @@ import { getPublicEnvOrNull } from "@/lib/env";
 
 /**
  * Refreshes Supabase session cookies on each matched request.
+ * When `response` is provided (e.g. from next-intl), cookies are applied to that
+ * response so redirects and locale handling are preserved.
  * @see https://supabase.com/docs/guides/auth/server-side/nextjs
  */
-export async function updateSession(request: NextRequest) {
+export async function updateSession(
+  request: NextRequest,
+  response?: NextResponse,
+) {
   const env = getPublicEnvOrNull();
   if (!env) {
-    return NextResponse.next({ request });
+    return response ?? NextResponse.next({ request });
   }
 
-  let response = NextResponse.next({ request });
+  const supabaseResponse = response ?? NextResponse.next({ request });
 
   const supabase = createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
@@ -26,9 +31,8 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options),
+            supabaseResponse.cookies.set(name, value, options),
           );
         },
       },
@@ -37,5 +41,5 @@ export async function updateSession(request: NextRequest) {
 
   await supabase.auth.getUser();
 
-  return response;
+  return supabaseResponse;
 }

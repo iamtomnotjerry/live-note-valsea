@@ -19,8 +19,8 @@ Copy `.env.example` → `.env.local` và điền giá trị từ Dashboard → S
 
 ## Auth & session
 
-- Cookie session được refresh qua `middleware.ts` → `updateSession`.
-- Nếu chưa cấu hình Supabase env, middleware trả `NextResponse.next` (dev không bị chặn).
+- **`src/middleware.ts`:** chạy **next-intl** (`createMiddleware`) trước, rồi `updateSession(request, response)` từ `lib/supabase/middleware.ts`. Session cookie được ghi **lên đúng `NextResponse` mà intl trả về** (redirect/prefix locale không bị mất).
+- Nếu chưa cấu hình Supabase env, `updateSession` trả nguyên response từ intl (dev không bị chặn vì thiếu Supabase).
 
 ## Database
 

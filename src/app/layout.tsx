@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { getLocale } from "next-intl/server";
 import "./globals.css";
 
 const fontSans = Inter({
@@ -14,23 +14,15 @@ const fontMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Live Note Taker — Ghi chép buổi học realtime",
-    template: "%s · Live Note Taker",
-  },
-  description:
-    "Live Note Taker: ghi chép buổi học bằng giọng nói, transcript realtime với VALSEA ASR — Next.js, Supabase, Vercel.",
-  applicationName: "Live Note Taker",
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="vi">
+    <html lang={locale}>
       <body
         className={`${fontSans.variable} ${fontMono.variable} min-h-dvh antialiased`}
       >

@@ -1,0 +1,61 @@
+{
+  "Meta": {
+    "title": "Live Note Taker — Real-time class notes",
+    "titleTemplate": "%s · Live Note Taker",
+    "description": "Live Note Taker: voice-first class notes with realtime transcripts powered by VALSEA ASR — Next.js, Supabase, Vercel."
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "vi": "Tiếng Việt",
+    "en": "English"
+  },
+  "Header": {
+    "brandTitle": "Live Note Taker",
+    "navLabel": "Main",
+    "live": "Live capture",
+    "valseaApi": "VALSEA API"
+  },
+  "Home": {
+    "kicker": "Live Note Taker · VALSEA Hackathon",
+    "headline": "Live Note Taker — realtime lecture notes, built for students in Southeast Asia.",
+    "subBefore": "A memorable name and a clear demo: speak into the mic → transcript updates live (dev via VALSEA RTT). Solid stack: TypeScript, Supabase, and a",
+    "subAfter": "folder so your team and Cursor share one map.",
+    "ctaLive": "Open live capture",
+    "ctaDocs": "VALSEA docs",
+    "stackTitle": "Technical stack",
+    "cardFrontendTitle": "Frontend",
+    "cardFrontendBody": "App Router with Server Components by default; Client Components only when needed. cn() utility for predictable Tailwind classes.",
+    "cardBackendTitle": "Backend & data",
+    "cardBackendBody": "Supabase (Postgres + Auth). Separate server and browser clients; middleware refreshes the session cookie."
+  },
+  "LivePage": {
+    "title": "Live Note Taker — realtime transcript",
+    "subtitleBefore": "VALSEA RTT (WebSocket + 16 kHz PCM). Dev: run",
+    "subtitleAfter": ", then press Start recording.",
+    "backHome": "← Home"
+  },
+  "Rtt": {
+    "cardTitle": "Live Note Taker · VALSEA RTT",
+    "cardDescBefore": "The browser connects to a local proxy at",
+    "cardDescMid": "; the proxy attaches a Bearer token to",
+    "cardDescAfter": ". PCM 16 kHz mono per VALSEA docs.",
+    "transcriptTitle": "Live transcript",
+    "transcriptHint": "Partials change over time; only finals are appended to history (per VALSEA guidance).",
+    "start": "Start recording",
+    "stop": "Stop",
+    "emptyHintBefore": "No content yet. Run",
+    "emptyHintAfter": ", press Start recording, and speak into the mic.",
+    "statusReady": "Ready.",
+    "statusStopped": "Stopped.",
+    "statusDisconnected": "Disconnected.",
+    "statusConnecting": "Connecting WebSocket…",
+    "statusWsOpen": "WebSocket open. Waiting for session.created…",
+    "statusSessionCreated": "Session created. Sending session.start…",
+    "statusEngineReady": "Engine ready. Enabling microphone…",
+    "statusRecording": "Recording → VALSEA RTT.",
+    "errNoGetUserMedia": "This browser does not support getUserMedia.",
+    "errMicOpen": "Could not open the microphone.",
+    "errValseaGeneric": "VALSEA RTT error",
+    "errWs": "WebSocket error to {url}. Run \"npm run dev:rtt\" and verify VALSEA_API_KEY in .env.local."
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -8,6 +9,8 @@ import { downsampleTo16kPcm16, pcm16ToBase64 } from "@/features/live-note/pcm";
 
 const DEFAULT_PROXY_WS =
   process.env.NEXT_PUBLIC_VALSEA_RT_PROXY_URL ?? "ws://127.0.0.1:3331";
+
+const REALTIME_URL = "wss://api.valsea.ai/v1/realtime";
 
 type RttServerMessage = {
   type: string;
@@ -22,14 +25,16 @@ type Props = {
 };
 
 export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
+  const t = useTranslations("Rtt");
   const [running, setRunning] = useState(false);
   const [finalSegments, setFinalSegments] = useState<string[]>([]);
   const [currentPartial, setCurrentPartial] = useState("");
-  const [status, setStatus] = useState<string>("Sẵn sàng.");
+  const [status, setStatus] = useState(() => t("statusReady"));
   const [error, setError] = useState<string | null>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
   const sessionReadyRef = useRef(false);
+  const intentionalCloseRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
@@ -41,7 +46,7 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
     processorRef.current = null;
     sourceRef.current?.disconnect();
     sourceRef.current = null;
-    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current?.getTracks().forEach((tr) => tr.stop());
     streamRef.current = null;
     void audioContextRef.current?.close().catch(() => {});
     audioContextRef.current = null;
@@ -52,6 +57,7 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
     const ws = wsRef.current;
     wsRef.current = null;
     if (ws && ws.readyState === WebSocket.OPEN) {
+      intentionalCloseRef.current = true;
       try {
         ws.send(JSON.stringify({ type: "audio.commit" }));
       } catch {
@@ -65,61 +71,64 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
       ws.close(1000, "client_stop");
     }
     setRunning(false);
-    setStatus("Đã dừng.");
-  }, [stopAudio]);
+    setStatus(t("statusStopped"));
+  }, [stopAudio, t]);
 
   const appendFinal = useCallback((text: string) => {
-    const t = text.trim();
-    if (!t) return;
-    setFinalSegments((prev) => [...prev, t]);
+    const seg = text.trim();
+    if (!seg) return;
+    setFinalSegments((prev) => [...prev, seg]);
   }, []);
 
-  const startAudioGraph = useCallback(async (ws: WebSocket) => {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      throw new Error("Trình duyệt không hỗ trợ getUserMedia.");
-    }
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: true, noiseSuppression: true },
-      video: false,
-    });
-    streamRef.current = stream;
-
-    const ctx = new AudioContext();
-    audioContextRef.current = ctx;
-    await ctx.resume();
-
-    const source = ctx.createMediaStreamSource(stream);
-    sourceRef.current = source;
-
-    const processor = ctx.createScriptProcessor(4096, 1, 1);
-    processorRef.current = processor;
-
-    processor.onaudioprocess = (ev) => {
-      if (!sessionReadyRef.current || ws.readyState !== WebSocket.OPEN) {
-        return;
+  const startAudioGraph = useCallback(
+    async (ws: WebSocket) => {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error(t("errNoGetUserMedia"));
       }
-      const ch0 = ev.inputBuffer.getChannelData(0);
-      const pcm = downsampleTo16kPcm16(ch0, ctx.sampleRate);
-      if (!pcm.length) return;
-      try {
-        ws.send(
-          JSON.stringify({
-            type: "audio.append",
-            audio: pcm16ToBase64(pcm),
-          }),
-        );
-      } catch {
-        /* ignore */
-      }
-    };
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true },
+        video: false,
+      });
+      streamRef.current = stream;
 
-    const mute = ctx.createGain();
-    mute.gain.value = 0;
-    source.connect(processor);
-    processor.connect(mute);
-    mute.connect(ctx.destination);
-    setStatus("Đang thu âm → VALSEA RTT.");
-  }, []);
+      const ctx = new AudioContext();
+      audioContextRef.current = ctx;
+      await ctx.resume();
+
+      const source = ctx.createMediaStreamSource(stream);
+      sourceRef.current = source;
+
+      const processor = ctx.createScriptProcessor(4096, 1, 1);
+      processorRef.current = processor;
+
+      processor.onaudioprocess = (ev) => {
+        if (!sessionReadyRef.current || ws.readyState !== WebSocket.OPEN) {
+          return;
+        }
+        const ch0 = ev.inputBuffer.getChannelData(0);
+        const pcm = downsampleTo16kPcm16(ch0, ctx.sampleRate);
+        if (!pcm.length) return;
+        try {
+          ws.send(
+            JSON.stringify({
+              type: "audio.append",
+              audio: pcm16ToBase64(pcm),
+            }),
+          );
+        } catch {
+          /* ignore */
+        }
+      };
+
+      const mute = ctx.createGain();
+      mute.gain.value = 0;
+      source.connect(processor);
+      processor.connect(mute);
+      mute.connect(ctx.destination);
+      setStatus(t("statusRecording"));
+    },
+    [t],
+  );
 
   const handleServerMessage = useCallback(
     async (raw: string, ws: WebSocket) => {
@@ -132,7 +141,7 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
 
       switch (msg.type) {
         case "session.created":
-          setStatus("Đã tạo phiên. Gửi session.start…");
+          setStatus(t("statusSessionCreated"));
           ws.send(
             JSON.stringify({
               type: "session.start",
@@ -144,12 +153,12 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
           );
           break;
         case "session.ready":
-          setStatus("Engine sẵn sàng. Bật micro…");
+          setStatus(t("statusEngineReady"));
           sessionReadyRef.current = true;
           try {
             await startAudioGraph(ws);
           } catch (e) {
-            setError(e instanceof Error ? e.message : "Không mở được micro.");
+            setError(e instanceof Error ? e.message : t("errMicOpen"));
             stopAll();
           }
           break;
@@ -161,28 +170,29 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
           setCurrentPartial("");
           break;
         case "error":
-          setError(msg.message ?? msg.code ?? "Lỗi VALSEA RTT");
+          setError(msg.message ?? msg.code ?? t("errValseaGeneric"));
           stopAll();
           break;
         default:
           break;
       }
     },
-    [appendFinal, language, startAudioGraph, stopAll],
+    [appendFinal, language, startAudioGraph, stopAll, t],
   );
 
   const start = useCallback(() => {
     setError(null);
     setFinalSegments([]);
     setCurrentPartial("");
-    setStatus("Đang kết nối WebSocket…");
+    setStatus(t("statusConnecting"));
     sessionReadyRef.current = false;
+    intentionalCloseRef.current = false;
 
     const ws = new WebSocket(DEFAULT_PROXY_WS);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      setStatus("WebSocket mở. Chờ session.created…");
+      setStatus(t("statusWsOpen"));
       setRunning(true);
     };
 
@@ -191,9 +201,7 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
     };
 
     ws.onerror = () => {
-      setError(
-        `Lỗi WebSocket tới ${DEFAULT_PROXY_WS}. Chạy "npm run dev:rtt" và kiểm tra VALSEA_API_KEY trong .env.local.`,
-      );
+      setError(t("errWs", { url: DEFAULT_PROXY_WS }));
       stopAudio();
       wsRef.current = null;
       setRunning(false);
@@ -203,9 +211,13 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
       stopAudio();
       wsRef.current = null;
       setRunning(false);
-      setStatus((s) => (s.startsWith("Đã dừng") ? s : "Mất kết nối."));
+      if (intentionalCloseRef.current) {
+        intentionalCloseRef.current = false;
+        return;
+      }
+      setStatus(t("statusDisconnected"));
     };
-  }, [handleServerMessage, stopAudio]);
+  }, [handleServerMessage, stopAudio, t]);
 
   useEffect(() => {
     return () => {
@@ -220,17 +232,15 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
     >
       <Card className="flex flex-col gap-4">
         <div>
-          <CardTitle>Live Note Taker · VALSEA RTT</CardTitle>
+          <CardTitle>{t("cardTitle")}</CardTitle>
           <CardDescription>
-            Live Note Taker: trình duyệt nối proxy cục bộ{" "}
-            <code className="rounded bg-[var(--muted)] px-1 font-mono text-xs">
+            {t("cardDescBefore")}{" "}
+            <code className="rounded bg-[var(--muted)] px-1 font-mono text-xs break-all">
               {DEFAULT_PROXY_WS}
-            </code>
-            ; proxy gắn Bearer tới{" "}
-            <code className="font-mono text-xs">
-              wss://api.valsea.ai/v1/realtime
-            </code>
-            . PCM 16 kHz mono theo tài liệu VALSEA.
+            </code>{" "}
+            {t("cardDescMid")}{" "}
+            <code className="font-mono text-xs break-all">{REALTIME_URL}</code>
+            {t("cardDescAfter")}
           </CardDescription>
         </div>
         {error ? (
@@ -241,11 +251,11 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
         <div className="flex flex-wrap gap-3">
           {!running ? (
             <Button type="button" onClick={start}>
-              Start recording
+              {t("start")}
             </Button>
           ) : (
             <Button type="button" variant="secondary" onClick={stopAll}>
-              Stop
+              {t("stop")}
             </Button>
           )}
         </div>
@@ -254,11 +264,8 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
 
       <Card className="flex min-h-[280px] flex-col gap-3">
         <div>
-          <CardTitle>Live transcript</CardTitle>
-          <CardDescription>
-            Partial thay đổi theo thời gian; chỉ final được ghép vào lịch sử
-            (theo khuyến nghị VALSEA).
-          </CardDescription>
+          <CardTitle>{t("transcriptTitle")}</CardTitle>
+          <CardDescription>{t("transcriptHint")}</CardDescription>
         </div>
         <div
           className="max-h-[420px] flex-1 overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-4 text-sm leading-relaxed"
@@ -266,9 +273,9 @@ export function LiveRttPanel({ className, language = "vietnamese" }: Props) {
         >
           {finalSegments.length === 0 && !currentPartial ? (
             <span className="text-[var(--muted-fg)]">
-              Chưa có nội dung. Chạy{" "}
-              <code className="font-mono text-xs">npm run dev:rtt</code>, bấm
-              Start, nói vào micro.
+              {t("emptyHintBefore")}{" "}
+              <code className="font-mono text-xs">npm run dev:rtt</code>{" "}
+              {t("emptyHintAfter")}
             </span>
           ) : (
             <div className="space-y-2 whitespace-pre-wrap">

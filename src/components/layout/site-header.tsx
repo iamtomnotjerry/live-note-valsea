@@ -1,11 +1,16 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { cn } from "@/lib/utils";
+import { Link } from "@/i18n/navigation";
 
 type SiteHeaderProps = {
   className?: string;
 };
 
-export function SiteHeader({ className }: SiteHeaderProps) {
+export async function SiteHeader({ className }: SiteHeaderProps) {
+  const t = await getTranslations("Header");
+  const tMeta = await getTranslations("Meta");
+
   return (
     <header
       className={cn(
@@ -13,29 +18,33 @@ export function SiteHeader({ className }: SiteHeaderProps) {
         className,
       )}
     >
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link
           href="/"
           className="max-w-[min(100%,14rem)] truncate text-sm font-semibold tracking-tight text-[var(--foreground)] sm:max-w-none"
-          title="Live Note Taker — ghi chép buổi học realtime"
+          title={tMeta("title")}
         >
-          Live Note Taker
+          {t("brandTitle")}
         </Link>
-        <nav aria-label="Chính" className="flex items-center gap-4 text-sm">
+        <nav
+          aria-label={t("navLabel")}
+          className="flex shrink-0 items-center gap-3 text-sm sm:gap-4"
+        >
           <Link
             href="/live"
             className="text-[var(--muted-fg)] transition-colors hover:text-[var(--foreground)]"
           >
-            Ghi chép live
+            {t("live")}
           </Link>
-          <Link
+          <a
             href="https://valsea.ai/docs"
             className="text-[var(--muted-fg)] transition-colors hover:text-[var(--foreground)]"
             rel="noopener noreferrer"
             target="_blank"
           >
-            VALSEA API
-          </Link>
+            {t("valseaApi")}
+          </a>
+          <LocaleSwitcher />
         </nav>
       </div>
     </header>

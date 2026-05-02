@@ -49,6 +49,12 @@ gh repo create <REPO> --private --source=. --remote=origin --push
 
 5. **Deploy.**
 
+### Đa ngôn ngữ (URL)
+
+- **Tiếng Việt (mặc định):** `/`, `/live` (không prefix).
+- **English:** `/en`, `/en/live` — next-intl `localePrefix: 'as-needed'`.
+- Không cần biến môi trường riêng cho i18n; chỉ cần build/deploy bình thường. Quy ước copy: [`docs/I18N.md`](./I18N.md).
+
 ### Live RTT (WebSocket proxy) trên Vercel
 
 - `npm run dev:rtt` chỉ chạy **proxy cục bộ** (`node scripts/valsea-rt-proxy.mjs`). **Vercel không chạy** process WebSocket lâu dài kiểu đó trên cùng một deploy mặc định.
@@ -70,4 +76,5 @@ Chi tiết backend: [`BACKEND.md`](./BACKEND.md).
 - [ ] Push `web/` lên GitHub (không lộ `.env.local`).
 - [ ] Vercel import repo + env Supabase + `VALSEA_API_KEY`.
 - [ ] Supabase project + (tuỳ chọn) `schema.sql`.
+- [ ] i18n: mặc định `/` tiếng Việt, English `/en` — quy ước copy trong [`I18N.md`](./I18N.md).
 - [ ] Hiểu giới hạn RTT proxy trên Vercel; lên kế hoạch proxy riêng hoặc REST.

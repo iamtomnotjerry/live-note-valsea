@@ -3,12 +3,12 @@
 ## Trước mỗi prompt lớn
 
 1. Đọc **`AGENTS.md`** (root project `web/`).
-2. Nếu đụng UI: `docs/FRONTEND.md`.
+2. Nếu đụng UI hoặc copy: `docs/FRONTEND.md` + `docs/I18N.md` (mọi chuỗi trong `messages/vi.json` + `en.json`).
 3. Nếu đụng Supabase/API: `docs/BACKEND.md` + `docs/ARCHITECTURE.md`.
 
 ## Prompt hiệu quả
 
-- Nêu **route** hoặc **file** (`src/app/...`, `src/features/...`).
+- Nêu **route** hoặc **file** (`src/app/[locale]/...`, `src/features/...`, `messages/*.json`).
 - Nêu **ràng buộc:** Server vs Client Component, có cần giấu API key không.
 - Yêu cầu cập nhật **docs** khi thay đổi kiến trúc hoặc env.
 
