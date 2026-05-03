@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { buttonClassName } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 
 function IconMic({ className }: { className?: string }) {
   return (
@@ -111,27 +111,42 @@ function IconSpark({ className }: { className?: string }) {
   );
 }
 
-function StarRating({ score, label }: { score: string; label: string }) {
+function IconTarget({ className }: { className?: string }) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="flex gap-0.5" aria-hidden>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <svg
-            key={i}
-            className="landing-star h-4 w-4 shrink-0 fill-current opacity-95"
-            viewBox="0 0 20 20"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-        ))}
-      </span>
-      <span className="text-sm font-extrabold tabular-nums text-[var(--foreground)]">
-        {score}
-      </span>
-      <span className="text-xs font-medium text-[var(--muted-fg)]">
-        {label}
-      </span>
-    </div>
+    <svg
+      className={className}
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+      <circle cx="12" cy="12" r="1.25" fill="currentColor" />
+    </svg>
+  );
+}
+
+function IconPlayCircle({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M10 8.5l6.5 3.5-6.5 3.5V8.5z"
+        fill="currentColor"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 
@@ -139,9 +154,24 @@ export async function HomeLanding() {
   const t = await getTranslations("Home");
 
   const strip = [
-    { Icon: IconMic, label: t("strip1Label"), sub: t("strip1Sub") },
-    { Icon: IconBook, label: t("strip2Label"), sub: t("strip2Sub") },
-    { Icon: IconTrophy, label: t("strip3Label"), sub: t("strip3Sub") },
+    {
+      Icon: IconMic,
+      label: t("strip1Label"),
+      sub: t("strip1Sub"),
+      tile: "bg-[var(--landing-sky)]",
+    },
+    {
+      Icon: IconBook,
+      label: t("strip2Label"),
+      sub: t("strip2Sub"),
+      tile: "bg-[var(--landing-lilac)]",
+    },
+    {
+      Icon: IconTrophy,
+      label: t("strip3Label"),
+      sub: t("strip3Sub"),
+      tile: "bg-[var(--landing-butter)]",
+    },
   ];
 
   const catalog = [
@@ -151,8 +181,7 @@ export async function HomeLanding() {
       desc: t("cat1Desc"),
       detail: t("cat1Detail"),
       Icon: IconMic,
-      heroClass:
-        "bg-gradient-to-br from-fuchsia-300/90 via-pink-200/90 to-rose-200/80 text-white dark:from-fuchsia-900/70 dark:via-pink-900/50 dark:to-rose-900/50",
+      tile: "bg-rose-200 dark:bg-rose-900/50",
     },
     {
       title: t("cat2Title"),
@@ -160,8 +189,7 @@ export async function HomeLanding() {
       desc: t("cat2Desc"),
       detail: t("cat2Detail"),
       Icon: IconBook,
-      heroClass:
-        "bg-gradient-to-br from-violet-300/90 via-purple-200/85 to-indigo-200/80 text-white dark:from-violet-900/65 dark:via-purple-900/45 dark:to-indigo-900/50",
+      tile: "bg-sky-200 dark:bg-sky-900/50",
     },
     {
       title: t("cat3Title"),
@@ -169,8 +197,7 @@ export async function HomeLanding() {
       desc: t("cat3Desc"),
       detail: t("cat3Detail"),
       Icon: IconWave,
-      heroClass:
-        "bg-gradient-to-br from-teal-300/90 via-emerald-200/85 to-cyan-200/80 text-white dark:from-teal-900/60 dark:via-emerald-900/45 dark:to-cyan-900/50",
+      tile: "bg-violet-200 dark:bg-violet-900/50",
     },
     {
       title: t("cat4Title"),
@@ -178,8 +205,7 @@ export async function HomeLanding() {
       desc: t("cat4Desc"),
       detail: t("cat4Detail"),
       Icon: IconTrophy,
-      heroClass:
-        "bg-gradient-to-br from-amber-300/90 via-orange-200/85 to-yellow-200/80 text-amber-950 dark:from-amber-900/50 dark:via-orange-900/40 dark:to-yellow-900/35 dark:text-amber-100",
+      tile: "bg-emerald-200 dark:bg-emerald-900/50",
     },
   ] as const;
 
@@ -204,42 +230,52 @@ export async function HomeLanding() {
           aria-labelledby="hero-heading"
         >
           <div className="space-y-7">
-            <p className="clay-pill inline-flex items-center gap-2 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-[var(--muted-fg)]">
-              <IconSpark className="h-4 w-4 text-[var(--landing-accent)]" />
+            <p
+              className="neo-pill inline-flex items-center gap-2 bg-[var(--landing-sky)] px-4 py-2 text-[11px] font-extrabold uppercase tracking-wider text-[var(--neo-btn-text)] motion-safe:animate-landing-fade-up motion-reduce:animate-none"
+              style={{ animationDelay: "0ms" }}
+            >
+              <IconSpark className="h-4 w-4" />
               {t("heroBadge")}
             </p>
             <h1
               id="hero-heading"
               className="text-balance font-extrabold tracking-tight text-[var(--foreground)]"
             >
-              <span className="block text-[2.25rem] leading-[1.08] sm:text-5xl lg:text-[3.35rem]">
+              <span
+                className="block text-[2.25rem] leading-[1.08] sm:text-5xl lg:text-[3.35rem] motion-safe:animate-landing-fade-up motion-reduce:animate-none"
+                style={{ animationDelay: "70ms" }}
+              >
                 {t("heroTitle1")}
               </span>
-              <span className="mt-2 block text-[2.25rem] leading-[1.08] sm:text-5xl lg:text-[3.35rem]">
+              <span
+                className="mt-2 block text-[2.25rem] leading-[1.08] sm:text-5xl lg:text-[3.35rem] motion-safe:animate-landing-fade-up motion-reduce:animate-none"
+                style={{ animationDelay: "140ms" }}
+              >
                 {t("heroTitle2")}
               </span>
-              <span className="mt-3 block bg-gradient-to-r from-fuchsia-500 via-pink-500 to-rose-400 bg-clip-text text-[1.65rem] text-transparent sm:text-3xl dark:from-fuchsia-300 dark:via-pink-300 dark:to-rose-300">
+              <span
+                className="mt-3 block text-[1.65rem] font-extrabold text-[var(--landing-accent)] sm:text-3xl motion-safe:animate-landing-fade-up motion-reduce:animate-none"
+                style={{ animationDelay: "210ms" }}
+              >
                 {t("heroTitle3")}
               </span>
             </h1>
-            <p className="max-w-xl text-pretty text-base leading-relaxed text-[var(--muted-fg)] sm:text-lg">
+            <p
+              className="max-w-xl text-pretty text-base leading-relaxed text-[var(--muted-fg)] motion-safe:animate-landing-fade-up motion-reduce:animate-none sm:text-lg"
+              style={{ animationDelay: "280ms" }}
+            >
               {t("heroSub")}
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                className={buttonClassName(
-                  "primary",
-                  "cursor-pointer rounded-2xl px-7 py-3.5 text-base font-bold shadow-md shadow-fuchsia-500/20 transition duration-200 hover:shadow-lg hover:shadow-fuchsia-500/25 dark:shadow-fuchsia-900/40",
-                )}
-                href="/live"
-              >
+            <div
+              className="flex flex-wrap gap-3 motion-safe:animate-landing-fade-up motion-reduce:animate-none"
+              style={{ animationDelay: "360ms" }}
+            >
+              <Link className="neo-btn neo-btn--mint" href="/live">
                 {t("ctaLive")}
+                <span aria-hidden>→</span>
               </Link>
               <a
-                className={buttonClassName(
-                  "secondary",
-                  "cursor-pointer rounded-2xl px-7 py-3.5 text-base font-bold transition duration-200",
-                )}
+                className="neo-btn neo-btn--sky"
                 href="https://valsea.ai/docs"
                 rel="noopener noreferrer"
                 target="_blank"
@@ -249,41 +285,78 @@ export async function HomeLanding() {
             </div>
           </div>
 
-          <div className="clay-card relative overflow-hidden p-6 sm:p-8">
+          <div className="neo-card relative overflow-hidden p-6 sm:p-8">
             <div
-              className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-pink-300/50 to-purple-300/40 blur-2xl dark:from-pink-600/20 dark:to-purple-600/20"
+              className="pointer-events-none absolute inset-0 overflow-hidden rounded-[1.15rem]"
               aria-hidden
-            />
+            >
+              <div className="absolute -right-1 top-5 flex h-11 w-11 items-center justify-center rounded-lg border-2 border-[var(--neo-ink)] bg-[var(--landing-coral)] text-[var(--neo-btn-text)] shadow-[3px_3px_0_0_var(--neo-raised)] motion-safe:animate-landing-soft-float motion-reduce:animate-none">
+                <IconTarget className="h-5 w-5" />
+              </div>
+              <div
+                className="absolute bottom-16 left-2 flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--neo-ink)] bg-[var(--landing-mint)] text-[var(--neo-btn-text)] shadow-[3px_3px_0_0_var(--neo-raised)] motion-safe:animate-landing-soft-float motion-reduce:animate-none"
+                style={{ animationDelay: "0.4s" }}
+              >
+                <IconBook className="h-5 w-5" />
+              </div>
+              <div
+                className="absolute bottom-6 right-3 flex h-10 w-10 items-center justify-center rounded-lg border-2 border-[var(--neo-ink)] bg-[var(--landing-butter)] text-[var(--neo-btn-text)] shadow-[3px_3px_0_0_var(--neo-raised)] motion-safe:animate-landing-soft-float motion-reduce:animate-none"
+                style={{ animationDelay: "0.8s" }}
+              >
+                <IconTrophy className="h-5 w-5" />
+              </div>
+            </div>
             <p className="landing-kicker">{t("progressEyebrow")}</p>
-            <h2 className="mt-3 text-xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-2xl">
-              {t("progressTitle")}
-            </h2>
-            <p className="mt-2 text-sm font-bold text-[var(--landing-accent)]">
-              {t("progressLesson")}
-            </p>
-            <p className="mt-1 text-sm text-[var(--muted-fg)]">
+            <div className="mt-3 flex items-start gap-3">
+              <span className="neo-icon-tile mt-0.5 h-11 w-11 shrink-0 bg-[var(--landing-sky)] text-[var(--neo-btn-text)]">
+                <IconPlayCircle className="h-6 w-6" />
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-2xl">
+                  {t("progressTitle")}
+                </h2>
+                <p className="mt-1 text-sm font-bold text-[var(--landing-accent)]">
+                  {t("progressLesson")}
+                </p>
+              </div>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--muted-fg)]">
               {t("progressMeta")}
             </p>
+            <div
+              className="relative mt-5 rounded-xl border-2 border-[var(--neo-ink)] bg-[color-mix(in_srgb,var(--muted)_55%,var(--surface))] p-4 shadow-[4px_4px_0_0_var(--neo-raised)]"
+              role="region"
+              aria-label={t("livePreviewTranscriptAria")}
+            >
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--muted-fg)]">
+                {t("livePreviewTranscriptLabel")}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--foreground)]">
+                {t("livePreviewFinal")}
+              </p>
+              <p className="mt-2 border-l-[3px] border-[var(--neo-ink)] pl-3 text-sm italic leading-relaxed text-[var(--foreground)] motion-safe:animate-landing-partial motion-reduce:animate-none motion-reduce:opacity-80">
+                {t("livePreviewPartial")}
+              </p>
+            </div>
             <div
               className="mt-6 space-y-2"
               role="group"
               aria-label={t("progressAria")}
             >
-              <div className="flex justify-between text-sm font-bold text-[var(--foreground)]">
+              <div className="flex justify-between text-sm font-extrabold text-[var(--foreground)]">
                 <span>{t("progressLabel")}</span>
-                <span className="tabular-nums text-[var(--landing-accent)]">
+                <span className="text-[var(--landing-accent)] motion-safe:animate-landing-partial motion-reduce:animate-none motion-reduce:opacity-80">
                   {t("progressValue")}
                 </span>
               </div>
-              <div className="h-3 overflow-hidden rounded-full bg-[var(--muted)] ring-1 ring-[var(--border)]">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 via-pink-400 to-teal-400 transition-[width] duration-500 motion-reduce:transition-none"
-                  style={{ width: "65%" }}
-                />
+              <div className="neo-progress-track overflow-hidden p-0.5">
+                <div className="h-full overflow-hidden rounded-full">
+                  <div className="h-full min-h-[8px] rounded-full border-2 border-[var(--neo-ink)] bg-[var(--landing-mint)] motion-safe:animate-landing-progress motion-reduce:animate-none motion-reduce:w-[72%]" />
+                </div>
               </div>
             </div>
             <Link
-              className="mt-6 inline-flex cursor-pointer items-center gap-2 text-sm font-bold text-[var(--landing-accent)] transition-colors hover:text-[var(--landing-warm)]"
+              className="neo-btn neo-btn--mint mt-6 w-full text-sm sm:text-base"
               href="/live"
             >
               {t("progressCta")}
@@ -296,10 +369,20 @@ export async function HomeLanding() {
           className="mt-12 flex flex-wrap justify-center gap-3 sm:mt-14 sm:gap-4"
           aria-label={t("stripAria")}
         >
-          {strip.map((s) => (
+          {strip.map((s, i) => (
             <li key={s.label}>
-              <div className="clay-pill flex items-center gap-3 px-4 py-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-200/80 to-violet-200/70 text-fuchsia-700 dark:from-fuchsia-900/50 dark:to-violet-900/50 dark:text-fuchsia-200">
+              <div
+                className={cn(
+                  "neo-pill flex items-center gap-3 bg-white px-4 py-3 motion-safe:animate-landing-fade-up motion-reduce:animate-none",
+                )}
+                style={{ animationDelay: `${420 + i * 90}ms` }}
+              >
+                <span
+                  className={cn(
+                    "neo-icon-tile h-10 w-10 text-[var(--neo-btn-text)]",
+                    s.tile,
+                  )}
+                >
                   <s.Icon className="h-5 w-5" />
                 </span>
                 <span className="text-left">
@@ -323,7 +406,7 @@ export async function HomeLanding() {
               { v: t("stat3Value"), l: t("stat3Label") },
             ].map((s) => (
               <li key={s.l}>
-                <div className="clay-card flex flex-col items-center px-5 py-8 text-center">
+                <div className="neo-card flex flex-col items-center px-5 py-8 text-center">
                   <span className="text-3xl font-extrabold tabular-nums tracking-tight text-[var(--foreground)] sm:text-4xl">
                     {s.v}
                   </span>
@@ -356,41 +439,54 @@ export async function HomeLanding() {
             </p>
           </div>
           <ul className="mt-12 grid gap-6 sm:grid-cols-2">
-            {catalog.map((c) => (
-              <li key={c.title}>
-                <article className="clay-card clay-card--interactive flex h-full flex-col overflow-hidden">
-                  <div
-                    className={`flex h-32 items-center justify-center sm:h-36 ${c.heroClass}`}
-                  >
-                    <c.Icon className="h-12 w-12 drop-shadow-md opacity-95" />
+            {catalog.map((c, i) => (
+              <li
+                key={c.title}
+                className="motion-safe:animate-landing-fade-up motion-reduce:animate-none"
+                style={{ animationDelay: `${200 + i * 75}ms` }}
+              >
+                <article className="neo-card neo-card--interactive flex h-full flex-col p-5 sm:p-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div
+                      className={cn(
+                        "neo-icon-tile h-12 w-12 shrink-0 text-[var(--neo-btn-text)]",
+                        c.tile,
+                      )}
+                    >
+                      <c.Icon className="h-6 w-6" />
+                    </div>
+                    <span className="neo-rating-pill flex items-center gap-1 px-2.5 py-1 text-[var(--foreground)]">
+                      <svg
+                        className="h-3.5 w-3.5 fill-[var(--landing-butter)]"
+                        viewBox="0 0 20 20"
+                        aria-hidden
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      {t("ratingScore")}
+                    </span>
                   </div>
-                  <div className="flex flex-1 flex-col gap-3 p-6">
-                    <p className="text-xs font-bold text-[var(--muted-fg)]">
-                      {c.detail}
-                    </p>
-                    <h3 className="text-lg font-extrabold text-[var(--foreground)]">
-                      {c.title}
-                    </h3>
-                    <p className="text-sm font-semibold text-[var(--landing-accent)]">
-                      {c.meta}
-                    </p>
-                    <p className="text-sm leading-relaxed text-[var(--muted-fg)]">
-                      {c.desc}
-                    </p>
-                    <StarRating
-                      score={t("ratingScore")}
-                      label={t("ratingLabel")}
-                    />
-                  </div>
+                  <p className="mt-4 text-xs font-extrabold uppercase tracking-wide text-[var(--muted-fg)]">
+                    {c.detail}
+                  </p>
+                  <h3 className="mt-1 text-lg font-extrabold text-[var(--foreground)]">
+                    {c.title}
+                  </h3>
+                  <p className="text-sm font-bold text-[var(--landing-accent)]">
+                    {c.meta}
+                  </p>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--muted-fg)]">
+                    {c.desc}
+                  </p>
+                  <p className="mt-4 text-xs font-bold text-[var(--muted-fg)]">
+                    {t("ratingLabel")}
+                  </p>
                 </article>
               </li>
             ))}
           </ul>
           <div className="mt-10 text-center">
-            <Link
-              className="inline-flex cursor-pointer items-center gap-2 text-sm font-extrabold text-[var(--landing-accent)] transition-colors hover:text-[var(--landing-warm)]"
-              href="/live"
-            >
+            <Link className="neo-btn neo-btn--sky mx-auto text-sm" href="/live">
               {t("viewAll")}
               <span aria-hidden>→</span>
             </Link>
@@ -417,7 +513,7 @@ export async function HomeLanding() {
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {why.map((w) => (
               <li key={w.title}>
-                <div className="clay-card h-full p-6">
+                <div className="neo-card neo-card--interactive h-full p-6">
                   <h3 className="font-extrabold text-[var(--foreground)]">
                     {w.title}
                   </h3>
@@ -447,13 +543,24 @@ export async function HomeLanding() {
           <ul className="grid gap-5 lg:grid-cols-3">
             {stories.map((s) => (
               <li key={s.name}>
-                <blockquote className="clay-card flex h-full flex-col p-6 sm:p-7">
+                <blockquote className="neo-card neo-card--interactive flex h-full flex-col p-6 sm:p-7">
+                  <span className="mb-3 flex gap-0.5" aria-hidden>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg
+                        key={i}
+                        className="landing-star h-4 w-4 shrink-0 fill-current"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </span>
                   <p className="flex-1 text-sm leading-relaxed text-[var(--foreground)]">
                     &ldquo;{s.quote}&rdquo;
                   </p>
-                  <footer className="mt-6 flex items-center gap-3 border-t border-[var(--border)] pt-5">
+                  <footer className="mt-6 flex items-center gap-3 border-t-2 border-[var(--neo-ink)] pt-5">
                     <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-400 to-pink-400 text-sm font-extrabold text-white dark:from-fuchsia-500 dark:to-pink-500"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-[var(--neo-ink)] bg-[var(--landing-coral)] text-sm font-extrabold text-[var(--neo-btn-text)] shadow-[3px_3px_0_0_var(--neo-raised)]"
                       aria-hidden
                     >
                       {s.name.charAt(0)}
@@ -472,7 +579,7 @@ export async function HomeLanding() {
         </section>
 
         <section
-          className="clay-card mb-16 px-6 py-12 text-center sm:mb-20 sm:px-12 sm:py-14"
+          className="neo-card mb-16 px-6 py-12 text-center motion-reduce:transition-none sm:mb-20 sm:px-12 sm:py-14"
           aria-labelledby="closing-heading"
         >
           <h2
@@ -485,20 +592,12 @@ export async function HomeLanding() {
             {t("closingSub")}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link
-              className={buttonClassName(
-                "primary",
-                "cursor-pointer rounded-2xl px-9 py-4 text-base font-bold shadow-md shadow-fuchsia-500/20 transition duration-200 hover:shadow-lg dark:shadow-fuchsia-900/40",
-              )}
-              href="/live"
-            >
+            <Link className="neo-btn neo-btn--mint px-8 py-4" href="/live">
               {t("closingCta")}
+              <span aria-hidden>→</span>
             </Link>
             <a
-              className={buttonClassName(
-                "secondary",
-                "cursor-pointer rounded-2xl px-9 py-4 text-base font-bold transition duration-200",
-              )}
+              className="neo-btn neo-btn--sky px-8 py-4"
               href="https://valsea.ai/docs"
               rel="noopener noreferrer"
               target="_blank"

@@ -2,11 +2,14 @@
 
 ## Biến môi trường
 
-| Biến                            | Phạm vi                | Mô tả                                                                  |
-| ------------------------------- | ---------------------- | ---------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Public                 | URL dự án Supabase.                                                    |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public                 | Khóa anon; RLS bảo vệ dữ liệu.                                         |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Server-only (optional) | Chỉ dùng job admin / bypass RLS — **không** đặt prefix `NEXT_PUBLIC_`. |
+| Biến                                   | Phạm vi                | Mô tả                                                                                      |
+| -------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Public                 | URL dự án Supabase.                                                                        |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`        | Public                 | JWT anon (legacy); RLS vẫn bảo vệ dữ liệu.                                                 |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public (tuỳ chọn)      | Thay thế / bổ sung anon: Dashboard mới có thể chỉ hiện publishable — app đọc qua `env.ts`. |
+| `SUPABASE_SERVICE_ROLE_KEY`            | Server-only (optional) | Chỉ dùng job admin / bypass RLS — **không** đặt prefix `NEXT_PUBLIC_`.                     |
+
+`getPublicEnv()` cần **URL + một khóa public hợp lệ**: ưu tiên `NEXT_PUBLIC_SUPABASE_ANON_KEY`, nếu thiếu thì dùng `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (xem [`src/lib/env.ts`](../src/lib/env.ts)).
 
 Copy `.env.example` → `.env.local` và điền giá trị từ Dashboard → Settings → API.
 
@@ -21,6 +24,12 @@ Copy `.env.example` → `.env.local` và điền giá trị từ Dashboard → S
 
 - **`src/middleware.ts`:** chạy **next-intl** (`createMiddleware`) trước, rồi `updateSession(request, response)` từ `lib/supabase/middleware.ts`. Session cookie được ghi **lên đúng `NextResponse` mà intl trả về** (redirect/prefix locale không bị mất).
 - Nếu chưa cấu hình Supabase env, `updateSession` trả nguyên response từ intl (dev không bị chặn vì thiếu Supabase).
+
+### Google OAuth (PKCE + redirect)
+
+- **Client:** [`src/features/auth/login-form.tsx`](../src/features/auth/login-form.tsx) — `signInWithOAuth({ provider: 'google' })` với `redirectTo` **same-origin** (`/auth/callback?next=…`). `queryParams.prompt=select_account` giúp chọn đúng tài khoản trên máy dùng chung.
+- **Callback:** [`src/app/auth/callback/route.ts`](../src/app/auth/callback/route.ts) — `exchangeCodeForSession(code)` trên server (cookie httpOnly qua `@supabase/ssr`), rồi redirect tới `next` đã **chuẩn hoá** — xem [`src/lib/auth-redirect.ts`](../src/lib/auth-redirect.ts): chỉ cho phép `/`, `/live`, `/login`, hoặc `/{locale}/…` với locale đã cấu hình (tránh open redirect). Tham số `next` từ UI dùng **`localizedAppPath`** vì `usePathname()` của next-intl **không** gồm prefix locale (tránh mất ngôn ngữ sau đăng nhập).
+- **Lỗi exchange:** redirect về login kèm `?error=auth`; ưu tiên đường dẫn có locale từ cookie **`NEXT_LOCALE`** (next-intl) khi khác locale mặc định.
 
 ## Database
 

@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { HeaderAuth } from "@/components/layout/header-auth";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -19,14 +20,21 @@ export async function SiteHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 border-b transition-colors duration-200",
+        "sticky top-0 z-50 transition-colors duration-200",
         tone === "landing"
-          ? "border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_78%,transparent)] shadow-sm backdrop-blur-xl"
-          : "border-[var(--border)] bg-[var(--background)]/85 backdrop-blur-md",
+          ? "border-b-0 bg-transparent"
+          : "border-b border-[var(--border)] bg-[var(--background)]/85 backdrop-blur-md",
         className,
       )}
     >
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4 sm:h-16 sm:px-6">
+      <div
+        className={cn(
+          "mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 sm:px-6",
+          tone === "landing"
+            ? "neo-header-shell mt-3 h-12 sm:mt-4 sm:h-14"
+            : "h-14 sm:h-16",
+        )}
+      >
         <Link
           href="/"
           className="truncate text-sm font-extrabold tracking-tight text-[var(--foreground)] sm:text-base"
@@ -56,6 +64,7 @@ export async function SiteHeader({
           >
             {t("live")}
           </Link>
+          <HeaderAuth headerTone={tone} />
           <a
             href="https://valsea.ai/docs"
             className="hidden cursor-pointer text-[var(--muted-fg)] transition-colors duration-200 hover:text-[var(--foreground)] sm:inline"

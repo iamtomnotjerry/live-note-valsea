@@ -41,11 +41,12 @@ gh repo create <REPO> --private --source=. --remote=origin --push
 3. **Framework Preset:** Next.js (tự nhận).
 4. **Environment Variables** (Settings → Environment Variables), thêm **Production + Preview**:
 
-| Name                            | Value              | Ghi chú                                             |
-| ------------------------------- | ------------------ | --------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | URL dự án Supabase | Settings → API                                      |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon `eyJ...`      | public                                              |
-| `VALSEA_API_KEY`                | `vl_...`           | **server only**, dùng cho API route / tính năng sau |
+| Name                                   | Value              | Ghi chú                                                                 |
+| -------------------------------------- | ------------------ | ----------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | URL dự án Supabase | Settings → API                                                          |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`        | JWT anon `eyJ…`    | Public; **hoặc** dùng dòng dưới thay thế — app cần **ít nhất một** key. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` | Public (Dashboard mới); xem `src/lib/env.ts` nếu không có anon.         |
+| `VALSEA_API_KEY`                       | `vl_…`             | **Server only**; proxy RTT / API route sau này.                         |
 
 5. **Deploy.**
 
@@ -67,7 +68,7 @@ Chi tiết backend: [`BACKEND.md`](./BACKEND.md).
 ## 3. Supabase
 
 1. [supabase.com/dashboard](https://supabase.com/dashboard) → **New project** → chọn region, đặt mật khẩu DB.
-2. **Settings → API:** copy `Project URL` và `anon` `public` → gán vào `NEXT_PUBLIC_SUPABASE_URL` và `NEXT_PUBLIC_SUPABASE_ANON_KEY` (local `.env.local` + Vercel).
+2. **Settings → API:** copy `Project URL` và khóa public (**anon JWT** hoặc **publishable**, tùy Dashboard) → gán `NEXT_PUBLIC_SUPABASE_URL` và **một trong** `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (local `.env.local` + Vercel). Chi tiết: [`.env.example`](../.env.example), [`docs/SUPABASE.md`](./SUPABASE.md).
 3. (Tuỳ chọn) Chạy SQL trong [`supabase/schema.sql`](../supabase/schema.sql) ở **SQL Editor** để tạo bảng lưu transcript sau này.
 4. Chi tiết RLS và client: [`SUPABASE.md`](./SUPABASE.md).
 

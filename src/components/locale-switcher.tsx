@@ -2,6 +2,8 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { routing, type AppLocale } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 
 export function LocaleSwitcher() {
   const t = useTranslations("LocaleSwitcher");
@@ -9,18 +11,35 @@ export function LocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const target = locale === "vi" ? "en" : "vi";
-
   return (
-    <button
-      type="button"
-      className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-bold text-[var(--foreground)] shadow-sm transition-colors duration-200 hover:bg-[var(--muted)]"
-      onClick={() => {
-        router.replace(pathname, { locale: target });
-      }}
-      aria-label={t("label")}
-    >
-      {target === "en" ? t("en") : t("vi")}
-    </button>
+    <div className="relative shrink-0">
+      <label className="sr-only" htmlFor="locale-switch">
+        {t("label")}
+      </label>
+      <select
+        id="locale-switch"
+        value={locale}
+        aria-label={t("label")}
+        className={cn(
+          "max-w-[10.5rem] cursor-pointer truncate rounded-full border border-[var(--border)] bg-[var(--surface)] py-1.5 pl-2.5 pr-7 text-xs font-bold text-[var(--foreground)] shadow-sm transition-colors duration-200 hover:bg-[var(--muted)]",
+          "appearance-none bg-[length:0.65rem] bg-[right_0.45rem_center] bg-no-repeat",
+        )}
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b5f7d'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`,
+        }}
+        onChange={(e) => {
+          const next = e.target.value;
+          if (next !== locale) {
+            router.replace(pathname, { locale: next });
+          }
+        }}
+      >
+        {routing.locales.map((loc) => (
+          <option key={loc} value={loc}>
+            {t(loc as AppLocale)}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

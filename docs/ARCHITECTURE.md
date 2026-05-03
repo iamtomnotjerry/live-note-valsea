@@ -4,7 +4,7 @@
 
 - **Runtime:** Next.js 16 (App Router), React 19, TypeScript strict.
 - **UI:** Tailwind CSS + token trong `src/app/globals.css` (màu, surface, action, clay landing). Font **Nunito** (subset `vietnamese`) + **JetBrains Mono** cho code.
-- **i18n:** **next-intl** — locale `vi` (mặc định), `en`; message files ở `messages/`.
+- **i18n:** **next-intl** — locale **`vi`** (mặc định), **`en`**, **`id`**, **`th`**, **`ms`**; message files ở `messages/`.
 - **Dữ liệu & auth:** Supabase (`@supabase/supabase-js`, `@supabase/ssr`).
 - **Triển khai:** Vercel (push repo, gán biến môi trường giống `.env.example`).
 
@@ -30,7 +30,7 @@
 | `lib/supabase/middleware.ts`    | Gắn cookie session lên `NextResponse` (có thể là response từ next-intl).                             |
 | `middleware.ts`                 | **1)** `createMiddleware(routing)` (next-intl) **2)** `updateSession(request, response)` (Supabase). |
 
-**`messages/`** (cùng cấp `src/` trong project `web/`): `vi.json`, `en.json` — nguồn chuỗi UI.
+**`messages/`** (cùng cấp `src/` trong project `web/`): `vi.json`, `en.json`, `id.json`, `th.json`, `ms.json` — **cùng cấu trúc key**; ba locale SEA có thể tái sinh từ `en.json` qua `node scripts/gen-sea-ui-locales.mjs` (xem `docs/I18N.md`).
 
 ## Luồng request
 

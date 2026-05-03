@@ -16,7 +16,7 @@
 ## i18n (next-intl)
 
 - **Chi tiết và checklist mở rộng locale:** [`docs/I18N.md`](./I18N.md).
-- **Tóm tắt:** mọi copy user-facing nằm trong `messages/vi.json` và `messages/en.json` (cùng key).
+- **Tóm tắt:** mọi copy user-facing nằm trong `messages/*.json` (`vi`, `en`, `id`, `th`, `ms`) — **cùng key** mọi file.
 - **Điều hướng nội bộ:** `import { Link, useRouter, usePathname } from '@/i18n/navigation'` — không dùng `next/link` cho route trong app (tránh mất locale).
 - **Đổi ngôn ngữ:** `LocaleSwitcher` (`router.replace(pathname, { locale })`); không tự nối chuỗi `/en` trên URL.
 - **Component server:** `await getTranslations('Namespace')`; **client:** `useTranslations('Namespace')`.
@@ -26,7 +26,7 @@
 
 - **`next-themes`** (`ThemeProvider` trong `src/app/layout.tsx`, `attribute="class"`, `darkMode: 'class'` trong Tailwind).
 - Nút **`ThemeToggle`** trên header; trạng thái lưu theo cookie/local của `next-themes`.
-- Token màu landing: `[data-landing="true"]` và `.dark [data-landing="true"]` trong `globals.css` (pastel campus + dark tím ấm).
+- Token màu landing: `[data-landing="true"]` và `.dark [data-landing="true"]` trong `globals.css` (pastel campus + dark tím ấm). Trang **`/`**, **`/live`**, **`/login`** dùng wrapper `data-landing` + `landing-gradient-bg`; **`SiteHeader`** / **`SiteFooter`** nhận `tone="landing"`; panel/form RTT và đăng nhập có prop tuỳ chọn **`tone="landing"`** (`LiveRttPanel`, `LoginForm`) để class neo (`neo-card`, `neo-btn`, …) khớp landing — mặc định `default` ở chỗ khác.
 
 ## Tailwind
 

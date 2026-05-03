@@ -1,15 +1,17 @@
--- Chạy trong Supabase Dashboard → SQL Editor.
--- Cảnh báo: các policy cuối file cho phép mọi request (phù hợp dev/hackathon).
--- Production: bỏ policy “open”, thay bằng auth.uid() + kiểm tra kỹ.
+-- Chạy trong Supabase Dashboard → SQL Editor (hoặc `supabase db push`).
+-- Bật Auth → Anonymous (tuỳ chọn, cho demo không cần email) và Email → Magic link.
 
 create extension if not exists "pgcrypto";
 
 create table if not exists public.transcript_sessions (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users (id) on delete set null,
+  user_id uuid references auth.users (id) on delete cascade,
   title text,
   created_at timestamptz not null default now()
 );
+
+alter table public.transcript_sessions
+  add column if not exists transcript text not null default '';
 
 create table if not exists public.transcript_segments (
   id bigint generated always as identity primary key,
@@ -22,21 +24,90 @@ create table if not exists public.transcript_segments (
 create index if not exists transcript_segments_session_id_idx
   on public.transcript_segments (session_id);
 
+create index if not exists transcript_sessions_user_id_created_idx
+  on public.transcript_sessions (user_id, created_at desc);
+
 alter table public.transcript_sessions enable row level security;
 alter table public.transcript_segments enable row level security;
 
 drop policy if exists "open_transcript_sessions" on public.transcript_sessions;
 drop policy if exists "open_transcript_segments" on public.transcript_segments;
+drop policy if exists "sess_select_own" on public.transcript_sessions;
+drop policy if exists "sess_insert_own" on public.transcript_sessions;
+drop policy if exists "seg_select_own" on public.transcript_segments;
+drop policy if exists "seg_insert_own" on public.transcript_segments;
+drop policy if exists "seg_update_own" on public.transcript_segments;
+drop policy if exists "seg_delete_own" on public.transcript_segments;
 
--- Dev / hackathon: mở full cho role anon + authenticated. Thu hẹp trước khi public thật.
-create policy "open_transcript_sessions"
+/* (select auth.uid()) — initplan-friendly; xem Supabase database linter auth_rls_initplan */
+create policy "sess_select_own"
   on public.transcript_sessions
-  for all
-  using (true)
-  with check (true);
+  for select
+  to authenticated
+  using ((select auth.uid()) = user_id);
 
-create policy "open_transcript_segments"
+create policy "sess_insert_own"
+  on public.transcript_sessions
+  for insert
+  to authenticated
+  with check ((select auth.uid()) = user_id);
+
+create policy "seg_select_own"
   on public.transcript_segments
-  for all
-  using (true)
-  with check (true);
+  for select
+  to authenticated
+  using (
+    exists (
+      select 1
+      from public.transcript_sessions s
+      where s.id = transcript_segments.session_id
+        and s.user_id = (select auth.uid())
+    )
+  );
+
+create policy "seg_insert_own"
+  on public.transcript_segments
+  for insert
+  to authenticated
+  with check (
+    exists (
+      select 1
+      from public.transcript_sessions s
+      where s.id = transcript_segments.session_id
+        and s.user_id = (select auth.uid())
+    )
+  );
+
+create policy "seg_update_own"
+  on public.transcript_segments
+  for update
+  to authenticated
+  using (
+    exists (
+      select 1
+      from public.transcript_sessions s
+      where s.id = transcript_segments.session_id
+        and s.user_id = (select auth.uid())
+    )
+  )
+  with check (
+    exists (
+      select 1
+      from public.transcript_sessions s
+      where s.id = transcript_segments.session_id
+        and s.user_id = (select auth.uid())
+    )
+  );
+
+create policy "seg_delete_own"
+  on public.transcript_segments
+  for delete
+  to authenticated
+  using (
+    exists (
+      select 1
+      from public.transcript_sessions s
+      where s.id = transcript_segments.session_id
+        and s.user_id = (select auth.uid())
+    )
+  );

@@ -4,10 +4,10 @@
 
 - Hook: `.husky/pre-commit` chạy **`npx lint-staged`**.
 - Cấu hình trong `package.json` → `lint-staged`:
-  - **Prettier** — format file staged: `*.{ts,tsx,js,jsx,mjs,cjs,json,css,md}` (gồm `messages/vi.json`, `messages/en.json`).
+  - **Prettier** — format file staged: `*.{ts,tsx,js,jsx,mjs,cjs,json,css,md}` (gồm mọi `messages/*.json`).
   - **ESLint** — `*.{ts,tsx}` với `--max-warnings 0` (cảnh báo cũng fail).
 
-Khi đổi copy i18n: cập nhật **đồng thời** `messages/vi.json` và `messages/en.json` (cùng key) — xem [`docs/I18N.md`](./I18N.md).
+Khi đổi copy i18n: cập nhật **mọi** `messages/{vi,en,id,th,ms}.json` cùng key (hoặc sửa `en.json` rồi chạy `node scripts/gen-sea-ui-locales.mjs` cho `id`/`th`/`ms`) — xem [`docs/I18N.md`](./I18N.md).
 
 ## Cài đặt lần đầu
 

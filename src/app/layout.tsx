@@ -1,4 +1,4 @@
-import { JetBrains_Mono, Nunito } from "next/font/google";
+import { JetBrains_Mono, Noto_Sans_Thai, Nunito } from "next/font/google";
 import { getLocale } from "next-intl/server";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
@@ -6,6 +6,13 @@ import "./globals.css";
 const fontSans = Nunito({
   variable: "--font-sans",
   subsets: ["latin", "vietnamese"],
+  display: "swap",
+});
+
+/** Nunito has no Thai glyphs in next/font; load only for `lang="th"`. */
+const fontThai = Noto_Sans_Thai({
+  variable: "--font-thai",
+  subsets: ["latin", "thai"],
   display: "swap",
 });
 
@@ -25,7 +32,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${fontSans.variable} ${fontMono.variable} min-h-dvh antialiased`}
+        className={`${fontSans.variable} ${locale === "th" ? fontThai.variable : ""} ${fontMono.variable} min-h-dvh antialiased`}
       >
         <ThemeProvider>{children}</ThemeProvider>
       </body>

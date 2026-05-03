@@ -10,6 +10,14 @@ export async function middleware(request: NextRequest) {
   return updateSession(request, response);
 }
 
+/**
+ * `matcher` must be static strings (Next parse-time). Keep the `(vi|en|…)` group
+ * in sync with `routing.locales` in `./i18n/routing.ts`.
+ */
 export const config = {
-  matcher: ["/", "/(vi|en)/:path*", "/((?!api|_next|_vercel|.*\\..*).*)"],
+  matcher: [
+    "/",
+    "/(vi|en|id|th|ms)/:path*",
+    "/((?!api|_next|_vercel|auth|.*\\..*).*)",
+  ],
 };

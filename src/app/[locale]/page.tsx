@@ -12,7 +12,7 @@ export default function HomePage() {
       <main className="flex-1">
         <HomeLanding />
       </main>
-      <SiteFooter />
+      <SiteFooter tone="landing" />
     </div>
   );
 }

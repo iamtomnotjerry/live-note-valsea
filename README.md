@@ -60,7 +60,7 @@ Tóm tắt:
 
 1. **GitHub:** `git remote add origin …` rồi `git push` từ thư mục `web/` (xem DEPLOY).
 2. **Vercel:** Import repo → Root Directory để trống nếu repo chỉ chứa app Next này → thêm env `NEXT_PUBLIC_SUPABASE_*`, `VALSEA_API_KEY`.
-3. **Supabase:** Tạo project → copy URL + anon key → chạy tuỳ chọn [`supabase/schema.sql`](supabase/schema.sql).
+3. **Supabase:** Tạo project → copy URL + khóa public (anon JWT hoặc publishable — xem `.env.example`) → chạy tuỳ chọn [`supabase/schema.sql`](supabase/schema.sql).
 
 **RTT trên Vercel:** proxy WebSocket local không chạy trên Vercel mặc định — xem [`docs/DEPLOY.md`](docs/DEPLOY.md).
 

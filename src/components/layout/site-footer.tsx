@@ -1,12 +1,24 @@
 import { getTranslations } from "next-intl/server";
+import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
 
-export async function SiteFooter() {
+type SiteFooterProps = {
+  tone?: "default" | "landing";
+};
+
+export async function SiteFooter({ tone = "default" }: SiteFooterProps) {
   const t = await getTranslations("Footer");
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] py-12 backdrop-blur-sm">
+    <footer
+      className={cn(
+        "py-12",
+        tone === "landing"
+          ? "border-t-[3px] border-[var(--neo-ink)] bg-[var(--neo-cream)]"
+          : "border-t border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] backdrop-blur-sm",
+      )}
+    >
       <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:gap-8">
         <div className="sm:col-span-2 lg:col-span-1">
           <p className="text-base font-bold text-[var(--foreground)]">
@@ -100,7 +112,14 @@ export async function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="mx-auto mt-10 max-w-6xl border-t border-[var(--border)] px-4 pt-8 text-center text-xs text-[var(--muted-fg)] sm:px-6">
+      <div
+        className={cn(
+          "mx-auto mt-10 max-w-6xl px-4 pt-8 text-center text-xs text-[var(--muted-fg)] sm:px-6",
+          tone === "landing"
+            ? "border-t-2 border-[var(--neo-ink)]"
+            : "border-t border-[var(--border)]",
+        )}
+      >
         {t("legal", { year })}
       </div>
     </footer>

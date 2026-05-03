@@ -3,7 +3,7 @@
 ## Trước mỗi prompt lớn
 
 1. Đọc **`AGENTS.md`** (root project `web/`).
-2. Nếu đụng UI hoặc copy: `docs/FRONTEND.md` + `docs/I18N.md` (mọi chuỗi trong `messages/vi.json` + `en.json`).
+2. Nếu đụng UI hoặc copy: `docs/FRONTEND.md` + `docs/I18N.md` (chuỗi trong `messages/*.json`, cùng key mọi locale).
 3. Nếu đụng Supabase/API: `docs/BACKEND.md` + `docs/ARCHITECTURE.md`.
 
 ## Prompt hiệu quả
