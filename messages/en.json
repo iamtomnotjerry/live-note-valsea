@@ -25,7 +25,21 @@
     "login": "Log in",
     "accountOpenAria": "Account menu",
     "signOut": "Sign out",
+    "profile": "Profile",
     "valseaApi": "VALSEA API"
+  },
+  "Profile": {
+    "title": "Your profile",
+    "metaDescription": "Account details for Live Note Taker.",
+    "pageLead": "Details from your signed-in account (read-only).",
+    "subtitle": "Signed in with Google.",
+    "email": "Email",
+    "name": "Display name",
+    "userId": "User ID",
+    "provider": "Sign-in",
+    "providerGoogle": "Google",
+    "noName": "Not set",
+    "backLive": "← Live notes"
   },
   "Login": {
     "title": "Log in",

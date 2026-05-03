@@ -25,7 +25,21 @@
     "login": "เข้าสู่ระบบ",
     "accountOpenAria": "เมนูบัญชี",
     "signOut": "ออกจากระบบ",
+    "profile": "โปรไฟล์",
     "valseaApi": "VALSEA API"
+  },
+  "Profile": {
+    "title": "โปรไฟล์ของคุณ",
+    "metaDescription": "รายละเอียดบัญชี Live Note Taker",
+    "pageLead": "ข้อมูลจากบัญชีที่เข้าสู่ระบบ (อ่านอย่างเดียว)",
+    "subtitle": "เข้าสู่ระบบด้วย Google",
+    "email": "อีเมล",
+    "name": "ชื่อที่แสดง",
+    "userId": "รหัสผู้ใช้",
+    "provider": "การเข้าสู่ระบบ",
+    "providerGoogle": "Google",
+    "noName": "ยังไม่ตั้ง",
+    "backLive": "← จดบันทึกสด"
   },
   "Login": {
     "title": "เข้าสู่ระบบ",

@@ -25,7 +25,21 @@
     "login": "Log masuk",
     "accountOpenAria": "Menu akaun",
     "signOut": "Log keluar",
+    "profile": "Profil",
     "valseaApi": "API VALSEA"
+  },
+  "Profile": {
+    "title": "Profil anda",
+    "metaDescription": "Butiran akaun Live Note Taker.",
+    "pageLead": "Maklumat daripada akaun yang dilog masuk (baca sahaja).",
+    "subtitle": "Log masuk dengan Google.",
+    "email": "E-mel",
+    "name": "Nama paparan",
+    "userId": "ID pengguna",
+    "provider": "Log masuk",
+    "providerGoogle": "Google",
+    "noName": "Belum ditetapkan",
+    "backLive": "← Nota langsung"
   },
   "Login": {
     "title": "Log masuk",

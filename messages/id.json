@@ -25,7 +25,21 @@
     "login": "Masuk",
     "accountOpenAria": "Menu akun",
     "signOut": "Keluar",
+    "profile": "Profil",
     "valseaApi": "API VALSEA"
+  },
+  "Profile": {
+    "title": "Profil Anda",
+    "metaDescription": "Detail akun Live Note Taker.",
+    "pageLead": "Informasi dari akun yang masuk (hanya baca).",
+    "subtitle": "Masuk dengan Google.",
+    "email": "Email",
+    "name": "Nama tampilan",
+    "userId": "ID pengguna",
+    "provider": "Masuk",
+    "providerGoogle": "Google",
+    "noName": "Belum diatur",
+    "backLive": "← Rekam live"
   },
   "Login": {
     "title": "Masuk",

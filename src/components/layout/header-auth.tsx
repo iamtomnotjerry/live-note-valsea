@@ -167,6 +167,21 @@ export function HeaderAuth({ headerTone = "default" }: HeaderAuthProps) {
           <p className="max-w-[14rem] truncate px-3 py-2 text-xs text-[var(--muted-fg)]">
             {label}
           </p>
+          <Link
+            href="/profile"
+            role="menuitem"
+            className={cn(
+              buttonClassName(
+                "ghost",
+                "block w-full justify-start rounded-none px-3 py-2 text-xs font-bold no-underline",
+              ),
+              neo &&
+                "hover:bg-[color-mix(in_srgb,var(--landing-sky)_18%,transparent)]",
+            )}
+            onClick={() => setMenuOpen(false)}
+          >
+            {t("profile")}
+          </Link>
           <div
             className={cn(
               "border-t border-[var(--border)] pt-1",

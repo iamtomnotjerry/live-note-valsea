@@ -25,7 +25,21 @@
     "login": "Đăng nhập",
     "accountOpenAria": "Menu tài khoản",
     "signOut": "Đăng xuất",
+    "profile": "Hồ sơ",
     "valseaApi": "VALSEA API"
+  },
+  "Profile": {
+    "title": "Hồ sơ của bạn",
+    "metaDescription": "Thông tin tài khoản Live Note Taker.",
+    "pageLead": "Thông tin từ tài khoản đã đăng nhập (chỉ xem).",
+    "subtitle": "Đã đăng nhập bằng Google.",
+    "email": "Email",
+    "name": "Tên hiển thị",
+    "userId": "Mã người dùng",
+    "provider": "Đăng nhập",
+    "providerGoogle": "Google",
+    "noName": "Chưa có",
+    "backLive": "← Ghi live"
   },
   "Login": {
     "title": "Đăng nhập",

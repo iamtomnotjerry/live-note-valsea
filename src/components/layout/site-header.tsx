@@ -29,22 +29,22 @@ export async function SiteHeader({
     >
       <div
         className={cn(
-          "mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 sm:px-6",
+          "mx-auto grid max-w-6xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-2 px-4 sm:gap-x-4 sm:px-6",
           tone === "landing"
-            ? "neo-header-shell mt-3 h-12 sm:mt-4 sm:h-14"
-            : "h-14 sm:h-16",
+            ? "neo-header-shell mt-3 min-h-[3.75rem] py-2.5 sm:mt-4 sm:min-h-[4.25rem] sm:py-3"
+            : "min-h-[3.75rem] py-2.5 sm:min-h-[4.25rem] sm:py-3",
         )}
       >
         <Link
           href="/"
-          className="truncate text-sm font-extrabold tracking-tight text-[var(--foreground)] sm:text-base"
+          className="min-w-0 shrink-0 truncate text-left text-sm font-extrabold tracking-tight text-[var(--foreground)] sm:text-base"
           title={tMeta("title")}
         >
           {t("brandTitle")}
         </Link>
         <nav
           aria-label={t("navLabel")}
-          className="flex max-w-[min(100%,28rem)] flex-wrap items-center justify-end gap-x-2 gap-y-1 text-xs font-bold sm:max-w-none sm:gap-x-4 sm:text-sm"
+          className="flex min-w-0 flex-wrap items-center justify-center justify-self-center gap-x-2 gap-y-1 text-xs font-bold sm:gap-x-4 sm:text-sm"
         >
           <Link
             href="/#features"
@@ -64,7 +64,6 @@ export async function SiteHeader({
           >
             {t("live")}
           </Link>
-          <HeaderAuth headerTone={tone} />
           <a
             href="https://valsea.ai/docs"
             className="hidden cursor-pointer text-[var(--muted-fg)] transition-colors duration-200 hover:text-[var(--foreground)] sm:inline"
@@ -73,9 +72,12 @@ export async function SiteHeader({
           >
             {t("valseaApi")}
           </a>
+        </nav>
+        <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-2.5">
           <ThemeToggle />
           <LocaleSwitcher />
-        </nav>
+          <HeaderAuth headerTone={tone} />
+        </div>
       </div>
     </header>
   );

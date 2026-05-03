@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { routing, type AppLocale } from "@/i18n/routing";
 
-const APP_SEGMENTS = new Set(["live", "login"]);
+const APP_SEGMENTS = new Set(["live", "login", "profile"]);
 
 function firstSegment(pathname: string): string | undefined {
   return pathname.split("/").filter(Boolean)[0];
