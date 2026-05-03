@@ -1,11 +1,19 @@
 "use server";
 
 import { z } from "zod";
+import { revalidateProfileTree } from "@/features/profile/revalidate-profile-tree";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const saveInputSchema = z.object({
   transcript: z.string().min(1).max(500_000),
   title: z.string().max(200).optional(),
+  folderId: z
+    .preprocess(
+      (v) =>
+        v === "" || v === null || v === undefined ? undefined : String(v),
+      z.string().uuid().optional(),
+    )
+    .optional(),
 });
 
 export type SaveTranscriptSessionResult =
@@ -46,6 +54,23 @@ export async function saveTranscriptSession(
   }
 
   const title = deriveTitle(parsed.data.transcript, parsed.data.title);
+  const folderId = parsed.data.folderId;
+
+  if (folderId) {
+    const { data: folder, error: folderErr } = await supabase
+      .from("note_folders")
+      .select("id")
+      .eq("id", folderId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (folderErr || !folder) {
+      return {
+        ok: false,
+        code: "VALIDATION",
+        message: "Invalid or inaccessible folder.",
+      };
+    }
+  }
 
   const { data, error } = await supabase
     .from("transcript_sessions")
@@ -53,6 +78,7 @@ export async function saveTranscriptSession(
       user_id: user.id,
       title,
       transcript: parsed.data.transcript,
+      folder_id: folderId ?? null,
     })
     .select("id")
     .maybeSingle();
@@ -64,5 +90,6 @@ export async function saveTranscriptSession(
     return { ok: false, code: "DB", message: "No row returned" };
   }
 
+  revalidateProfileTree();
   return { ok: true, id: data.id };
 }

@@ -2,11 +2,22 @@
 
 ## Trạng thái project (đã check qua Supabase MCP)
 
-| Hạng mục             | Kết quả                                                                 |
-| -------------------- | ----------------------------------------------------------------------- |
-| **API URL**          | `https://ahhijuoqfnrqmldurnuk.supabase.co`                              |
-| **Bảng `public`**    | `transcript_sessions`, `transcript_segments` — **RLS bật**, hiện 0 dòng |
-| **Security advisor** | Không có lint trả về (lần gọi `get_advisors` gần nhất)                  |
+| Hạng mục             | Kết quả                                                                                                                                                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **API URL**          | `https://ahhijuoqfnrqmldurnuk.supabase.co`                                                                                                                                                                                   |
+| **Bảng `public`**    | `transcript_sessions`, `transcript_segments`, `note_folders` — **RLS bật** (số dòng tuỳ dùng)                                                                                                                                |
+| **Security advisor** | Gọi MCP `get_advisors` (security): còn **WARN** tuỳ chọn (vd. _Leaked password protection_ nếu dùng mật khẩu — Google OAuth không bắt buộc). DB function `transcript_sessions_set_updated_at` đã gắn `search_path = public`. |
+
+### MCP Supabase (Cursor)
+
+Agent có thể gọi **`apply_migration`** / **`execute_sql`** trên project đã liên kết — ví dụ đã apply:
+
+- `transcript_sessions_updated_at_and_folder_counts_rpc` — cột `updated_at`, trigger, RPC `note_counts_by_folder_for_user`.
+- `fix_transcript_sessions_set_updated_at_search_path` — chỉnh linter `function_search_path_mutable`.
+
+File tương ứng trong repo: [`supabase/migrations/`](../supabase/migrations/) (giữ đồng bộ với Dashboard **Database → Migrations**).
+
+Kiểu TypeScript DB: [`src/lib/supabase/database.types.ts`](../src/lib/supabase/database.types.ts) (đồng bộ với schema hiện tại; có thể regenerate bằng MCP `generate_typescript_types` hoặc CLI `supabase gen types`).
 
 **MCP không thể thay bạn:** bật provider **Google**, nhập **Client ID / Client Secret**, sửa **Site URL / Redirect URLs** trong Dashboard — làm tay theo checklist dưới.
 
@@ -53,9 +64,13 @@ Copy từ Supabase Dashboard → **Settings → API**. Xem thêm [`.env.example`
 
 File [`supabase/schema.sql`](../supabase/schema.sql):
 
-- Bảng `transcript_sessions`: `user_id` → `auth.users`, `title`, **`transcript`** (full text export), `created_at`.
+- Bảng `transcript_sessions`: `user_id` → `auth.users`, `title`, **`transcript`** (full text export), `created_at`, **`updated_at`** (tự cập nhật khi sửa), **`folder_id`** (tuỳ chọn) → `note_folders`.
+- Hàm SQL **`note_counts_by_folder_for_user()`**: gom đếm note theo `folder_id` cho user hiện tại (app gọi qua RPC; nếu chưa deploy thì app fallback đếm bằng query `folder_id`).
+- Bảng **`note_folders`**: `user_id`, `name` — nhóm các phiên đã lưu (UI “folder / file”).
 - Bảng `transcript_segments` (tuỳ chọn mở rộng sau).
-- **RLS:** chỉ `authenticated`, mỗi user chỉ đọc/ghi dòng `user_id = auth.uid()` (và segment thuộc session của mình).
+- **RLS:** chỉ `authenticated`, mỗi user chỉ đọc/ghi dòng `user_id = auth.uid()` (và segment thuộc session của mình). Insert `transcript_sessions` chỉ cho phép `folder_id` trỏ tới folder **của chính user** hoặc `null`. Có thêm policy **update** / **delete** session của chính user (để chỉnh sửa ghi chú trên trang Profile).
+
+**Project Supabase đã tạo trước khi có `note_folders`:** mở SQL Editor, chạy **toàn bộ** file `schema.sql` hiện tại (các lệnh `IF NOT EXISTS` / `DROP POLICY` + `CREATE POLICY` an toàn khi chạy lại), hoặc copy phần từ comment `/* Folders:` trong file đến hết policy `sess_insert_own` đã cập nhật.
 
 Chạy lại script trong SQL Editor nếu bạn đã từng chạy bản policy `open_*` cũ (file hiện `DROP` policy cũ rồi tạo policy mới).
 

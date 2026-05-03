@@ -168,7 +168,7 @@ export function HeaderAuth({ headerTone = "default" }: HeaderAuthProps) {
             {label}
           </p>
           <Link
-            href="/profile"
+            href="/profile/folders"
             role="menuitem"
             className={cn(
               buttonClassName(

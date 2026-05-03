@@ -10,25 +10,31 @@
 
 ## Thư mục `src/`
 
-| Đường dẫn                       | Vai trò                                                                                              |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `app/layout.tsx`                | Root: `<html lang suppressHydrationWarning>`, font, `ThemeProvider`, `globals.css`.                  |
-| `app/[locale]/layout.tsx`       | `NextIntlClientProvider`, `setRequestLocale`, metadata theo locale.                                  |
-| `app/[locale]/page.tsx`         | Trang chủ (theo locale).                                                                             |
-| `app/[locale]/live/page.tsx`    | Trang live / RTT.                                                                                    |
-| `components/ui/`                | Thành phần UI tái sử dụng, không gắn domain.                                                         |
-| `components/layout/`            | Header, footer landing (`site-footer.tsx`).                                                          |
-| `components/theme-provider.tsx` | Bọc `next-themes` (class trên `<html>`).                                                             |
-| `features/landing/`             | Trang chủ hackathon / marketing (claymorphism, hero, catalog, testimonials).                         |
-| `i18n/routing.ts`               | `locales`, `defaultLocale`, `localePrefix`.                                                          |
-| `i18n/request.ts`               | Cấu hình request next-intl (nạp messages).                                                           |
-| `i18n/navigation.ts`            | `Link` / router có awareness locale.                                                                 |
-| `lib/env.ts`                    | Chuẩn hoá biến môi trường public qua Zod (`getPublicEnv`).                                           |
-| `lib/utils.ts`                  | `cn()` — gộp class Tailwind an toàn.                                                                 |
-| `lib/supabase/client.ts`        | Supabase **chỉ cho Client Component** (`"use client"`).                                              |
-| `lib/supabase/server.ts`        | Supabase cho Server Component / Server Action / Route Handler.                                       |
-| `lib/supabase/middleware.ts`    | Gắn cookie session lên `NextResponse` (có thể là response từ next-intl).                             |
-| `middleware.ts`                 | **1)** `createMiddleware(routing)` (next-intl) **2)** `updateSession(request, response)` (Supabase). |
+| Đường dẫn                        | Vai trò                                                                                                                                                                                               |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app/layout.tsx`                 | Root: `<html lang suppressHydrationWarning>`, font, `ThemeProvider`, `globals.css`.                                                                                                                   |
+| `app/[locale]/layout.tsx`        | `NextIntlClientProvider`, `setRequestLocale`, metadata theo locale.                                                                                                                                   |
+| `app/[locale]/page.tsx`          | Trang chủ (theo locale).                                                                                                                                                                              |
+| `app/[locale]/live/page.tsx`     | Trang live / RTT.                                                                                                                                                                                     |
+| `app/[locale]/profile/`          | Workspace sau đăng nhập: **`/profile` → redirect `/profile/folders`**, `folders`, `folders/[folderId]`, `notes`, `notes/[sessionId]`, `account`; layout + nav trong `layout.tsx` / `profile-nav.tsx`. |
+| `features/profile/`              | Thư viện note, editor, folder CRUD tile, pagination, server actions (`transcript-session-actions`, …).                                                                                                |
+| `features/live-note/`            | RTT panel, dialog lưu transcript (`save-transcript-dialog`), **`note-folder-actions`** (server).                                                                                                      |
+| `hooks/`                         | Hook dùng chung (vd. focus trap dialog).                                                                                                                                                              |
+| `lib/supabase/database.types.ts` | Kiểu `Database` cho `createServerClient` / `createBrowserClient` (đồng bộ với schema Supabase).                                                                                                       |
+| `supabase/migrations/`           | SQL migration versioned (đồng bộ với Supabase Dashboard khi dùng MCP/CLI).                                                                                                                            |
+| `components/ui/`                 | Thành phần UI tái sử dụng, không gắn domain.                                                                                                                                                          |
+| `components/layout/`             | Header, footer landing (`site-footer.tsx`).                                                                                                                                                           |
+| `components/theme-provider.tsx`  | Bọc `next-themes` (class trên `<html>`).                                                                                                                                                              |
+| `features/landing/`              | Trang chủ hackathon / marketing (claymorphism, hero, catalog, testimonials).                                                                                                                          |
+| `i18n/routing.ts`                | `locales`, `defaultLocale`, `localePrefix`.                                                                                                                                                           |
+| `i18n/request.ts`                | Cấu hình request next-intl (nạp messages).                                                                                                                                                            |
+| `i18n/navigation.ts`             | `Link` / router có awareness locale.                                                                                                                                                                  |
+| `lib/env.ts`                     | Chuẩn hoá biến môi trường public qua Zod (`getPublicEnv`).                                                                                                                                            |
+| `lib/utils.ts`                   | `cn()` — gộp class Tailwind an toàn.                                                                                                                                                                  |
+| `lib/supabase/client.ts`         | Supabase **chỉ cho Client Component** (`"use client"`).                                                                                                                                               |
+| `lib/supabase/server.ts`         | Supabase cho Server Component / Server Action / Route Handler.                                                                                                                                        |
+| `lib/supabase/middleware.ts`     | Gắn cookie session lên `NextResponse` (có thể là response từ next-intl).                                                                                                                              |
+| `middleware.ts`                  | **1)** `createMiddleware(routing)` (next-intl) **2)** `updateSession(request, response)` (Supabase).                                                                                                  |
 
 **`messages/`** (cùng cấp `src/` trong project `web/`): `vi.json`, `en.json`, `id.json`, `th.json`, `ms.json` — **cùng cấu trúc key**; ba locale SEA có thể tái sinh từ `en.json` qua `node scripts/gen-sea-ui-locales.mjs` (xem `docs/I18N.md`).
 

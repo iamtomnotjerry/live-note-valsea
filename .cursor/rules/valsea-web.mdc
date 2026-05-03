@@ -7,7 +7,7 @@ alwaysApply: false
 # Live Note Taker — quy tắc code
 
 - **Server Components mặc định.** `"use client"` chỉ khi cần browser APIs, hooks, events, hoặc `createSupabaseBrowserClient`.
-- **i18n (next-intl):** không hardcode chuỗi hiển thị. Sửa **`messages/vi.json` và `messages/en.json`** cùng lúc (cùng key). Server → `getTranslations`; client → `useTranslations`. Điều hướng nội bộ → `Link` / `useRouter` / `usePathname` từ **`@/i18n/navigation`**. Trang UI → **`app/[locale]/`**. Chi tiết: `docs/I18N.md`, `AGENTS.md`.
+- **i18n (next-intl):** không hardcode chuỗi hiển thị. Sửa **`messages/{vi,en,id,th,ms}.json`** cùng lúc (cùng key mọi locale đang dùng). Server → `getTranslations`; client → `useTranslations`. Điều hướng nội bộ → `Link` / `useRouter` / `usePathname` từ **`@/i18n/navigation`**. Trang UI → **`app/[locale]/`**. Chi tiết: `docs/I18N.md`, `AGENTS.md`.
 - **Env:** dùng `getPublicEnv()` từ `@/lib/env` cho `NEXT_PUBLIC_*`. Không thêm secret vào `NEXT_PUBLIC_`.
 - **Supabase:** server → `@/lib/supabase/server`; client → `@/lib/supabase/client`. Không trộn trong cùng component.
 - **Middleware:** không tách riêng logic locale và Supabase mà quên gọi `updateSession(request, response)` với response từ next-intl — xem `src/middleware.ts`.

@@ -22,6 +22,8 @@
 - **Supabase:**
   - Server → `createSupabaseServerClient()` từ `@/lib/supabase/server`
   - Client → `createSupabaseBrowserClient()` từ `@/lib/supabase/client`
+  - Kiểu bảng/RPC → `Database` trong `@/lib/supabase/database.types.ts` (đồng bộ schema; regenerate khi đổi DB — xem `docs/BACKEND.md`).
+- **Profile / thư viện note:** route dưới `app/[locale]/profile/`; logic server action trong `src/features/profile/` và `src/features/live-note/note-folder-actions.ts`. Sau đổi dữ liệu profile, dùng `revalidateProfileTree()` từ `@/features/profile/revalidate-profile-tree` để làm mới cache layout profile.
 - **UI primitives** đặt trong `src/components/ui/`. Logic theo feature → `src/features/<feature>/` (tạo khi feature lớn).
 - **Trang có UI** đặt dưới **`src/app/[locale]/`** (giữ đồng bộ với next-intl).
 - **Commit:** xem `docs/COMMITS.md`. Pre-commit: `docs/PRE_COMMIT.md`.

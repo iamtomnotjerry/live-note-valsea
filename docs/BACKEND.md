@@ -28,19 +28,19 @@ Copy `.env.example` → `.env.local` và điền giá trị từ Dashboard → S
 ### Google OAuth (PKCE + redirect)
 
 - **Client:** [`src/features/auth/login-form.tsx`](../src/features/auth/login-form.tsx) — `signInWithOAuth({ provider: 'google' })` với `redirectTo` **same-origin** (`/auth/callback?next=…`). `queryParams.prompt=select_account` giúp chọn đúng tài khoản trên máy dùng chung.
-- **Callback:** [`src/app/auth/callback/route.ts`](../src/app/auth/callback/route.ts) — `exchangeCodeForSession(code)` trên server (cookie httpOnly qua `@supabase/ssr`), rồi redirect tới `next` đã **chuẩn hoá** — xem [`src/lib/auth-redirect.ts`](../src/lib/auth-redirect.ts): chỉ cho phép `/`, `/live`, `/login`, hoặc `/{locale}/…` với locale đã cấu hình (tránh open redirect). Tham số `next` từ UI dùng **`localizedAppPath`** vì `usePathname()` của next-intl **không** gồm prefix locale (tránh mất ngôn ngữ sau đăng nhập).
+- **Callback:** [`src/app/auth/callback/route.ts`](../src/app/auth/callback/route.ts) — `exchangeCodeForSession(code)` trên server (cookie httpOnly qua `@supabase/ssr`), rồi redirect tới `next` đã **chuẩn hoá** — xem [`src/lib/auth-redirect.ts`](../src/lib/auth-redirect.ts): chỉ cho phép `/`, `/live`, `/login`, và nhánh **`/profile/**`** đã whitelist (`/profile/folders`, `/profile/folders/uncategorized`, `/profile/folders/<uuid>`, `/profile/notes`, `/profile/notes/<uuid>`, `/profile/account`, cùng bản có prefix locale), hoặc `/{locale}/…`tương ứng (tránh open redirect). Tham số`next` từ UI dùng **`localizedAppPath`** vì `usePathname()` của next-intl **không** gồm prefix locale (tránh mất ngôn ngữ sau đăng nhập).
 - **Lỗi exchange:** redirect về login kèm `?error=auth`; ưu tiên đường dẫn có locale từ cookie **`NEXT_LOCALE`** (next-intl) khi khác locale mặc định.
 
 ## Database
 
-- Tạo bảng trong Supabase SQL Editor; bật **Row Level Security** trước khi production.
-- Sinh type TypeScript:
+- Schema tổng hợp: [`supabase/schema.sql`](../supabase/schema.sql) (chạy SQL Editor hoặc `supabase db push`). Migration từng bước: [`supabase/migrations/`](../supabase/migrations/) — giữ khớp với Supabase **Database → Migrations** (có thể apply qua MCP `apply_migration`).
+- Bật **Row Level Security** trước khi production.
+- **Bảng chính:** `transcript_sessions` (ghi chú đã lưu: `title`, `transcript`, `folder_id`, `created_at`, **`updated_at`**, RLS theo `user_id`); `note_folders` (nhóm theo user); RPC **`note_counts_by_folder_for_user()`** — app gọi để đếm note theo folder (fallback nếu RPC chưa deploy: xem [`docs/SUPABASE.md`](./SUPABASE.md)).
+- Kiểu TypeScript cho client Supabase: [`src/lib/supabase/database.types.ts`](../src/lib/supabase/database.types.ts) — import `Database` trong [`server.ts`](../src/lib/supabase/server.ts) / [`client.ts`](../src/lib/supabase/client.ts). Có thể tái sinh bằng MCP **`generate_typescript_types`** hoặc CLI:
 
   ```bash
-  npx supabase gen types typescript --project-id YOUR_REF > src/types/database.generated.ts
+  npx supabase gen types typescript --project-id YOUR_REF > src/lib/supabase/database.types.ts
   ```
-
-  (Cần CLI Supabase hoặc lấy type từ Dashboard.)
 
 ## API tích hợp VALSEA (hackathon)
 

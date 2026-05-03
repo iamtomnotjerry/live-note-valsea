@@ -1,18 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import type { User } from "@supabase/supabase-js";
 import { Link } from "@/i18n/navigation";
+import {
+  profileAvatarUrl,
+  profileDisplayName,
+} from "@/features/profile/profile-user-meta";
 import { cn } from "@/lib/utils";
-
-function displayName(user: User): string | null {
-  const meta = user.user_metadata as Record<string, string | undefined>;
-  const raw = (meta.full_name ?? meta.name ?? "").trim();
-  return raw || null;
-}
-
-function avatarUrl(user: User): string | undefined {
-  const meta = user.user_metadata as Record<string, string | undefined>;
-  return meta.avatar_url ?? meta.picture;
-}
 
 type ProfilePanelProps = {
   user: User;
@@ -25,8 +18,8 @@ export async function ProfilePanel({
 }: ProfilePanelProps) {
   const t = await getTranslations("Profile");
   const neo = tone === "landing";
-  const name = displayName(user);
-  const url = avatarUrl(user);
+  const name = profileDisplayName(user);
+  const url = profileAvatarUrl(user);
   const email = user.email ?? "—";
 
   return (

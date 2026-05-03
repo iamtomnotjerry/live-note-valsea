@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { buttonClassName } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { downsampleTo16kPcm16, pcm16ToBase64 } from "@/features/live-note/pcm";
-import { saveTranscriptSession } from "@/features/live-note/save-transcript-session";
+import { SaveTranscriptDialog } from "@/features/live-note/save-transcript-dialog";
 import { VALSEA_RTT_LANGUAGE_CODES } from "@/features/live-note/valsea-rtt-language-options";
 import { localizedAppPath } from "@/lib/auth-redirect";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -41,8 +41,9 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
   const [status, setStatus] = useState(() => t("statusReady"));
   const [error, setError] = useState<string | null>(null);
   const [copyDone, setCopyDone] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
   const [lastSavedId, setLastSavedId] = useState<string | null>(null);
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [saveDialogTranscript, setSaveDialogTranscript] = useState("");
   const [showLoginCta, setShowLoginCta] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [hasUserSession, setHasUserSession] = useState(false);
@@ -114,33 +115,14 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
     setShowLoginCta(false);
   }, []);
 
-  const saveNote = useCallback(async () => {
+  const openSaveDialog = useCallback(() => {
     const text = buildTranscriptExport();
     if (!text) return;
-    setSaveLoading(true);
     setShowLoginCta(false);
     setError(null);
-    try {
-      const result = await saveTranscriptSession({ transcript: text });
-      if (!result.ok && result.code === "AUTH_REQUIRED") {
-        setHasUserSession(false);
-        setError(t("saveSessionExpired"));
-        setShowLoginCta(true);
-        return;
-      }
-      if (result.ok) {
-        setLastSavedId(result.id);
-        setError(null);
-      } else {
-        setLastSavedId(null);
-        setError(result.message ?? t("saveFailed"));
-      }
-    } catch {
-      setError(t("saveFailed"));
-    } finally {
-      setSaveLoading(false);
-    }
-  }, [buildTranscriptExport, t]);
+    setSaveDialogTranscript(text);
+    setSaveDialogOpen(true);
+  }, [buildTranscriptExport]);
 
   useEffect(() => {
     let cancelled = false;
@@ -345,251 +327,279 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
   }, [stopAll]);
 
   return (
-    <div
-      className={cn("grid gap-6 lg:grid-cols-2 lg:gap-8", className)}
-      aria-live="polite"
-    >
-      <Card
-        className={cn(
-          "flex flex-col gap-4",
-          neo && "neo-card border-0 shadow-none",
-        )}
+    <>
+      <SaveTranscriptDialog
+        open={saveDialogOpen}
+        transcript={saveDialogTranscript}
+        tone={tone}
+        onClose={() => setSaveDialogOpen(false)}
+        onSaved={(id) => {
+          setLastSavedId(id);
+          setError(null);
+        }}
+        onAuthRequired={() => {
+          setHasUserSession(false);
+          setShowLoginCta(true);
+          setSaveDialogOpen(false);
+        }}
+      />
+      <div
+        className={cn("grid gap-6 lg:grid-cols-2 lg:gap-8", className)}
+        aria-live="polite"
       >
-        <div>
-          <CardTitle
-            className={cn(
-              neo && "text-xl font-extrabold tracking-tight sm:text-2xl",
-            )}
-          >
-            {t("cardTitle")}
-          </CardTitle>
-          <CardDescription className={cn(neo && "font-medium leading-relaxed")}>
-            {t("cardIntro")}
-          </CardDescription>
-        </div>
-        {error ? (
-          <p
-            className={cn(
-              "rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300",
-              neo &&
-                "border-2 border-red-600/50 shadow-[3px_3px_0_0_color-mix(in_srgb,red_35%,var(--neo-raised))]",
-            )}
-          >
-            {error}
-          </p>
-        ) : null}
-        <div className="flex flex-col gap-1.5">
-          <label
-            className={cn(
-              "text-xs font-medium text-[var(--muted-fg)]",
-              neo &&
-                "font-extrabold uppercase tracking-wide text-[var(--foreground)]",
-            )}
-            htmlFor="valsea-rtt-language"
-          >
-            {t("asrLanguage")}
-          </label>
-          <select
-            id="valsea-rtt-language"
-            className={cn(
-              "max-w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm text-[var(--foreground)] shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-60",
-              neo &&
-                "rounded-xl border-2 border-[var(--neo-ink)] bg-[var(--surface)] font-medium shadow-[4px_4px_0_0_var(--neo-raised)]",
-            )}
-            value={asrLanguage}
-            disabled={running}
-            onChange={(e) => setAsrLanguage(e.target.value)}
-          >
-            {VALSEA_RTT_LANGUAGE_CODES.map((code) => (
-              <option key={code} value={code}>
-                {t(`lang.${code}`)}
-              </option>
-            ))}
-          </select>
-          <p className="text-xs text-[var(--muted-fg)]">
-            {t("asrLanguageHint")}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          {!running ? (
-            <Button
-              type="button"
-              variant={neo ? "ghost" : "primary"}
-              onClick={start}
-              className={cn(
-                neo &&
-                  "neo-btn neo-btn--mint px-6 py-3 text-sm font-extrabold sm:px-8",
-              )}
-            >
-              {t("start")}
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              variant={neo ? "ghost" : "secondary"}
-              onClick={stopAll}
-              className={cn(
-                neo && "neo-btn neo-btn--sky px-6 py-3 text-sm font-extrabold",
-              )}
-            >
-              {t("stop")}
-            </Button>
-          )}
-        </div>
-        <p
+        <Card
           className={cn(
-            "text-xs text-[var(--muted-fg)]",
-            neo && "font-medium text-[var(--foreground)]/90",
+            "flex flex-col gap-4",
+            neo && "neo-card border-0 shadow-none",
           )}
         >
-          {status}
-        </p>
-      </Card>
-
-      <Card
-        className={cn(
-          "flex min-h-[280px] flex-col gap-3",
-          neo && "neo-card border-0 shadow-none",
-        )}
-      >
-        <div>
-          <CardTitle
-            className={cn(
-              neo && "text-xl font-extrabold tracking-tight sm:text-2xl",
-            )}
-          >
-            {t("transcriptTitle")}
-          </CardTitle>
-          <CardDescription className={cn(neo && "font-medium leading-relaxed")}>
-            {t("transcriptHint")}
-          </CardDescription>
-        </div>
-        {finalSegments.length > 0 || currentPartial.trim() ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              variant="ghost"
+          <div>
+            <CardTitle
               className={cn(
-                "px-3 py-2 text-xs",
-                neo && "neo-btn neo-btn--ghost font-extrabold",
+                neo && "text-xl font-extrabold tracking-tight sm:text-2xl",
               )}
-              aria-label={t("copyNotesAria")}
-              onClick={() => void copyTranscript()}
             >
-              {copyDone ? t("copyDone") : t("copyNotes")}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              className={cn(
-                "px-3 py-2 text-xs",
-                neo && "neo-btn neo-btn--ghost font-extrabold",
-              )}
-              aria-label={t("downloadTxtAria")}
-              onClick={downloadTranscript}
+              {t("cardTitle")}
+            </CardTitle>
+            <CardDescription
+              className={cn(neo && "font-medium leading-relaxed")}
             >
-              {t("downloadTxt")}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
+              {t("cardIntro")}
+            </CardDescription>
+          </div>
+          {error ? (
+            <p
               className={cn(
-                "px-3 py-2 text-xs",
-                neo && "neo-btn neo-btn--ghost font-extrabold",
+                "rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300",
+                neo &&
+                  "border-2 border-red-600/50 shadow-[3px_3px_0_0_color-mix(in_srgb,red_35%,var(--neo-raised))]",
               )}
-              aria-label={t("clearNotesAria")}
+            >
+              {error}
+            </p>
+          ) : null}
+          <div className="flex flex-col gap-1.5">
+            <label
+              className={cn(
+                "text-xs font-medium text-[var(--muted-fg)]",
+                neo &&
+                  "font-extrabold uppercase tracking-wide text-[var(--foreground)]",
+              )}
+              htmlFor="valsea-rtt-language"
+            >
+              {t("asrLanguage")}
+            </label>
+            <select
+              id="valsea-rtt-language"
+              className={cn(
+                "max-w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm text-[var(--foreground)] shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-60",
+                neo &&
+                  "rounded-xl border-2 border-[var(--neo-ink)] bg-[var(--surface)] font-medium shadow-[4px_4px_0_0_var(--neo-raised)]",
+              )}
+              value={asrLanguage}
               disabled={running}
-              title={running ? t("clearWhileRecordingHint") : undefined}
-              onClick={clearTranscript}
+              onChange={(e) => setAsrLanguage(e.target.value)}
             >
-              {t("clearNotes")}
-            </Button>
-            {!sessionChecked ? (
-              <span
+              {VALSEA_RTT_LANGUAGE_CODES.map((code) => (
+                <option key={code} value={code}>
+                  {t(`lang.${code}`)}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-[var(--muted-fg)]">
+              {t("asrLanguageHint")}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {!running ? (
+              <Button
+                type="button"
+                variant={neo ? "ghost" : "primary"}
+                onClick={start}
                 className={cn(
-                  "inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--muted-fg)]",
                   neo &&
-                    "border-2 border-[var(--neo-ink)] font-bold text-[var(--foreground)] shadow-[3px_3px_0_0_var(--neo-raised)]",
+                    "neo-btn neo-btn--mint px-6 py-3 text-sm font-extrabold sm:px-8",
                 )}
-                aria-live="polite"
               >
-                {t("saveAuthChecking")}
-              </span>
-            ) : hasUserSession ? (
+                {t("start")}
+              </Button>
+            ) : (
               <Button
                 type="button"
                 variant={neo ? "ghost" : "secondary"}
+                onClick={stopAll}
                 className={cn(
-                  "px-3 py-2 text-xs",
-                  neo && "neo-btn neo-btn--sky font-extrabold",
+                  neo &&
+                    "neo-btn neo-btn--sky px-6 py-3 text-sm font-extrabold",
                 )}
-                aria-label={t("saveNoteAria")}
-                disabled={running || saveLoading}
-                onClick={() => void saveNote()}
               >
-                {saveLoading ? t("saveSaving") : t("saveNote")}
+                {t("stop")}
               </Button>
-            ) : (
-              <Link
-                href={`/login?next=${encodeURIComponent(localizedAppPath(pathname || "/live", locale))}`}
-                className={cn(
-                  buttonClassName(
-                    "secondary",
-                    "px-3 py-2 text-xs no-underline",
-                  ),
-                  neo && "neo-btn neo-btn--mint font-extrabold",
-                )}
-                aria-label={t("loginToSaveAria")}
-              >
-                {t("loginToSave")}
-              </Link>
             )}
           </div>
-        ) : null}
-        {lastSavedId ? (
           <p
-            className="text-xs text-emerald-700 dark:text-emerald-400"
-            role="status"
+            className={cn(
+              "text-xs text-[var(--muted-fg)]",
+              neo && "font-medium text-[var(--foreground)]/90",
+            )}
           >
-            {t("saveSuccess")}
+            {status}
           </p>
-        ) : null}
-        {showLoginCta ? (
-          <p className="text-xs text-[var(--muted-fg)]">
-            <Link
-              className={cn(
-                "font-bold underline decoration-2 underline-offset-2",
-                neo &&
-                  "text-[var(--landing-accent)] decoration-[var(--neo-ink)]",
-              )}
-              href="/login"
-            >
-              {t("saveLoginLink")}
-            </Link>
-          </p>
-        ) : null}
-        <div
+        </Card>
+
+        <Card
           className={cn(
-            "max-h-[420px] flex-1 overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-4 text-sm leading-relaxed",
-            neo &&
-              "border-2 border-[var(--neo-ink)] bg-[color-mix(in_srgb,var(--muted)_50%,var(--surface))] shadow-[4px_4px_0_0_var(--neo-raised)]",
+            "flex min-h-[280px] flex-col gap-3",
+            neo && "neo-card border-0 shadow-none",
           )}
-          tabIndex={0}
         >
-          {finalSegments.length === 0 && !currentPartial ? (
-            <span className="text-[var(--muted-fg)]">{t("emptyHint")}</span>
-          ) : (
-            <div className="space-y-2 whitespace-pre-wrap">
-              <p>{finalSegments.join(" ")}</p>
-              {currentPartial ? (
-                <p className="text-[var(--muted-fg)] italic">
-                  {currentPartial}
-                </p>
-              ) : null}
+          <div>
+            <CardTitle
+              className={cn(
+                neo && "text-xl font-extrabold tracking-tight sm:text-2xl",
+              )}
+            >
+              {t("transcriptTitle")}
+            </CardTitle>
+            <CardDescription
+              className={cn(neo && "font-medium leading-relaxed")}
+            >
+              {t("transcriptHint")}
+            </CardDescription>
+          </div>
+          {finalSegments.length > 0 || currentPartial.trim() ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                className={cn(
+                  "px-3 py-2 text-xs",
+                  neo && "neo-btn neo-btn--ghost font-extrabold",
+                )}
+                aria-label={t("copyNotesAria")}
+                onClick={() => void copyTranscript()}
+              >
+                {copyDone ? t("copyDone") : t("copyNotes")}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className={cn(
+                  "px-3 py-2 text-xs",
+                  neo && "neo-btn neo-btn--ghost font-extrabold",
+                )}
+                aria-label={t("downloadTxtAria")}
+                onClick={downloadTranscript}
+              >
+                {t("downloadTxt")}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className={cn(
+                  "px-3 py-2 text-xs",
+                  neo && "neo-btn neo-btn--ghost font-extrabold",
+                )}
+                aria-label={t("clearNotesAria")}
+                disabled={running}
+                title={running ? t("clearWhileRecordingHint") : undefined}
+                onClick={clearTranscript}
+              >
+                {t("clearNotes")}
+              </Button>
+              {!sessionChecked ? (
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--muted-fg)]",
+                    neo &&
+                      "border-2 border-[var(--neo-ink)] font-bold text-[var(--foreground)] shadow-[3px_3px_0_0_var(--neo-raised)]",
+                  )}
+                  aria-live="polite"
+                >
+                  {t("saveAuthChecking")}
+                </span>
+              ) : hasUserSession ? (
+                <Button
+                  type="button"
+                  variant={neo ? "ghost" : "secondary"}
+                  className={cn(
+                    "px-3 py-2 text-xs",
+                    neo && "neo-btn neo-btn--sky font-extrabold",
+                  )}
+                  aria-label={t("saveNoteAria")}
+                  disabled={running}
+                  onClick={openSaveDialog}
+                >
+                  {t("saveNote")}
+                </Button>
+              ) : (
+                <Link
+                  href={`/login?next=${encodeURIComponent(localizedAppPath(pathname || "/live", locale))}`}
+                  className={cn(
+                    buttonClassName(
+                      "secondary",
+                      "px-3 py-2 text-xs no-underline",
+                    ),
+                    neo && "neo-btn neo-btn--mint font-extrabold",
+                  )}
+                  aria-label={t("loginToSaveAria")}
+                >
+                  {t("loginToSave")}
+                </Link>
+              )}
             </div>
-          )}
-        </div>
-      </Card>
-    </div>
+          ) : null}
+          {lastSavedId ? (
+            <p
+              className="text-xs text-emerald-700 dark:text-emerald-400"
+              role="status"
+            >
+              <span>{t("saveSuccess")} </span>
+              <Link
+                href={`/profile/notes/${lastSavedId}`}
+                className="font-extrabold underline decoration-2 underline-offset-2 hover:text-emerald-900 dark:hover:text-emerald-200"
+              >
+                {t("saveOpenNote")}
+              </Link>
+            </p>
+          ) : null}
+          {showLoginCta ? (
+            <p className="text-xs text-[var(--muted-fg)]">
+              <Link
+                className={cn(
+                  "font-bold underline decoration-2 underline-offset-2",
+                  neo &&
+                    "text-[var(--landing-accent)] decoration-[var(--neo-ink)]",
+                )}
+                href="/login"
+              >
+                {t("saveLoginLink")}
+              </Link>
+            </p>
+          ) : null}
+          <div
+            className={cn(
+              "max-h-[420px] flex-1 overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--muted)]/40 p-4 text-sm leading-relaxed",
+              neo &&
+                "border-2 border-[var(--neo-ink)] bg-[color-mix(in_srgb,var(--muted)_50%,var(--surface))] shadow-[4px_4px_0_0_var(--neo-raised)]",
+            )}
+            tabIndex={0}
+          >
+            {finalSegments.length === 0 && !currentPartial ? (
+              <span className="text-[var(--muted-fg)]">{t("emptyHint")}</span>
+            ) : (
+              <div className="space-y-2 whitespace-pre-wrap">
+                <p>{finalSegments.join(" ")}</p>
+                {currentPartial ? (
+                  <p className="text-[var(--muted-fg)] italic">
+                    {currentPartial}
+                  </p>
+                ) : null}
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
+    </>
   );
 }

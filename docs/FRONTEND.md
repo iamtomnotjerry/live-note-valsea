@@ -38,4 +38,4 @@
 
 - `components/ui/*`: primitive, không import feature-specific API.
 - `components/layout/*`: khung app (header kèm i18n).
-- Feature lớn: `src/features/<name>/` (xem `docs/ARCHITECTURE.md`).
+- Feature lớn: `src/features/<name>/` (xem `docs/ARCHITECTURE.md`). Trang **profile** (folders, notes, editor) dùng neo/clay **`tone="landing"`** giống live/login khi cần đồng bộ visual.
