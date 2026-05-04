@@ -13,7 +13,8 @@ alwaysApply: false
 - **Middleware:** không tách riêng logic locale và Supabase mà quên gọi `updateSession(request, response)` với response từ next-intl — xem `src/middleware.ts`.
 - **Styles:** token CSS trong `globals.css` (`--foreground`, `--action`, …); gom class bằng `cn()` từ `@/lib/utils`.
 - **UI:** primitives trong `components/ui/`; không nhúng logic domain nặng vào ui primitives.
-- **API bên thứ ba (VALSEA, LLM):** ưu tiên `app/api/**/route.ts` nếu cần giấu key.
+- **VALSEA (REST):** key chỉ server — `process.env.VALSEA_API_KEY` trong Route Handler / proxy script, **không** `NEXT_PUBLIC_`. Helpers: `src/lib/valsea-api.ts` (`valseaPostJson`, `valseaPostMultipart`). Routes: `src/app/api/valsea/clarify/route.ts` (live), `src/app/api/valsea/tool/route.ts` (`POST` JSON `tool`: clarify, translate, annotate, convert, format, sentiment), `src/app/api/valsea/transcribe/route.ts` (`multipart`: `file`, `language`). Client note: `src/features/profile/note-valsea-toolbar.tsx` + `note-valsea-toolbar-icons.tsx` — chỉ `fetch('/api/valsea/...')` same-origin. Copy toolbar / dialog hướng dẫn: namespace **`Profile`**, key `editorValsea*` và `editorValseaGuide*` trong **cả** `messages/{vi,en,id,th,ms}.json`. Payload & env: `docs/BACKEND.md`.
+- **API bên thứ ba khác (LLM, v.v.):** cùng nguyên tắc — ưu tiên `app/api/**/route.ts` nếu cần giấu key.
 - **Mở rộng:** feature lớn → `src/features/<name>/` (components, actions, types).
 - **Tài liệu:** thay đổi kiến trúc / locale → cập nhật `docs/ARCHITECTURE.md`, `docs/I18N.md` (và FRONTEND/BACKEND nếu liên quan).
 - **Commit:** conventional commits — xem `docs/COMMITS.md`.

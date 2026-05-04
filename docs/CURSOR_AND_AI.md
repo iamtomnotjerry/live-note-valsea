@@ -14,7 +14,7 @@
 
 ## Quy tắc `.cursor/rules`
 
-File `.cursor/rules/valsea-web.mdc` áp dụng cho `src/**` — agent luôn thấy convention dự án.
+File `.cursor/rules/valsea-web.mdc` áp dụng cho `src/**` — agent luôn thấy convention dự án (Server Components, i18n, Supabase, Tailwind, **VALSEA**: route `/api/valsea/*`, `src/lib/valsea-api.ts`, toolbar note, key `Profile.editorValsea*` / `editorValseaGuide*`).
 
 ## Không để AI “đoán mò” env
 

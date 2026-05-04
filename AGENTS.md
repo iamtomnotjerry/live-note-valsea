@@ -9,7 +9,7 @@
 1. `docs/ARCHITECTURE.md` — bản đồ thư mục, locale, luồng middleware.
 2. `docs/I18N.md` — quy tắc copy, namespace, navigation có locale.
 3. `docs/FRONTEND.md` — UI/UX, Server vs Client Components.
-4. `docs/BACKEND.md` — Supabase, env, RLS, API nội bộ.
+4. `docs/BACKEND.md` — Supabase, env, RLS, **VALSEA** (RTT proxy, `/api/valsea/clarify|tool|transcribe`, `src/lib/valsea-api.ts`).
 5. `docs/UI_UX_PRO_MAX.md` — skill UI/UX Pro Max (Cursor), CLI `uipro`.
 
 ## Quy tắc bắt buộc
@@ -24,6 +24,7 @@
   - Client → `createSupabaseBrowserClient()` từ `@/lib/supabase/client`
   - Kiểu bảng/RPC → `Database` trong `@/lib/supabase/database.types.ts` (đồng bộ schema; regenerate khi đổi DB — xem `docs/BACKEND.md`).
 - **Profile / thư viện note:** route dưới `app/[locale]/profile/`; logic server action trong `src/features/profile/` và `src/features/live-note/note-folder-actions.ts`. Sau đổi dữ liệu profile, dùng `revalidateProfileTree()` từ `@/features/profile/revalidate-profile-tree` để làm mới cache layout profile.
+- **VALSEA trên editor note:** UI trong `src/features/profile/note-valsea-toolbar*.tsx`; không gọi `api.valsea.ai` từ client — chỉ Route Handler nội bộ. Đổi nhãn/tooltip/hướng dẫn → cập nhật mọi locale trong `messages/*.json` (`Profile.editorValsea*`, `editorValseaGuide*`). Quy ước chi tiết: `.cursor/rules/valsea-web.mdc` + `docs/BACKEND.md`.
 - **UI primitives** đặt trong `src/components/ui/`. Logic theo feature → `src/features/<feature>/` (tạo khi feature lớn).
 - **Trang có UI** đặt dưới **`src/app/[locale]/`** (giữ đồng bộ với next-intl).
 - **Commit:** xem `docs/COMMITS.md`. Pre-commit: `docs/PRE_COMMIT.md`.
