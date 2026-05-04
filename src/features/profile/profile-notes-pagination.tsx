@@ -1,6 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { cn } from "@/lib/utils";
+import { ProfileNotesLoadMoreLink } from "@/features/profile/profile-notes-load-more-link";
 
 type ProfileNotesPaginationProps = {
   hasMore: boolean;
@@ -21,15 +20,11 @@ export async function ProfileNotesPagination({
       className="mt-10 flex justify-center border-t border-[var(--border)] pt-8"
       aria-label={t("libraryPaginationNav")}
     >
-      <Link
+      <ProfileNotesLoadMoreLink
         href={nextHref}
-        className={cn(
-          "rounded-full border border-[var(--border)] bg-[var(--background)] px-5 py-2.5 text-sm font-extrabold text-[var(--foreground)] no-underline transition-colors hover:bg-[var(--muted)]",
-          neo && "neo-btn neo-btn--mint border-0",
-        )}
-      >
-        {t("libraryLoadMore")}
-      </Link>
+        label={t("libraryLoadMore")}
+        neo={neo}
+      />
     </nav>
   );
 }

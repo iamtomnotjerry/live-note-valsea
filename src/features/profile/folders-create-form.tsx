@@ -75,7 +75,8 @@ export function FoldersCreateForm({
           type="submit"
           variant={neo ? "secondary" : "primary"}
           className={cn(neo && "neo-btn neo-btn--sky shrink-0 font-extrabold")}
-          disabled={busy || !name.trim()}
+          loading={busy}
+          disabled={!name.trim()}
         >
           {busy ? t("foldersCreating") : t("foldersCreateSubmit")}
         </Button>

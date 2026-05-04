@@ -1,4 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost";
@@ -25,20 +26,36 @@ export function buttonClassName(
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
+  /** Shows a spinner, sets `aria-busy`, and disables the control. */
+  loading?: boolean;
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
-    { className, variant = "primary", type = "button", ...props },
+    {
+      className,
+      variant = "primary",
+      type = "button",
+      loading = false,
+      disabled,
+      children,
+      ...props
+    },
     ref,
   ) {
+    const isDisabled = Boolean(disabled || loading);
     return (
       <button
         ref={ref}
         type={type}
         className={buttonClassName(variant, className)}
+        disabled={isDisabled}
+        aria-busy={loading || undefined}
         {...props}
-      />
+      >
+        {loading ? <Spinner size="sm" decorative /> : null}
+        {children}
+      </button>
     );
   },
 );

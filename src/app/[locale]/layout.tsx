@@ -6,6 +6,7 @@ import {
   setRequestLocale,
 } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { RouteTransitionProgress } from "@/components/navigation/route-transition-progress";
 import type { AppLocale } from "@/i18n/routing";
 import { routing } from "@/i18n/routing";
 
@@ -48,6 +49,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider messages={messages}>
+      <RouteTransitionProgress />
       {children}
     </NextIntlClientProvider>
   );

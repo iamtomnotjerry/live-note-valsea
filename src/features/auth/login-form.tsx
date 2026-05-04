@@ -107,11 +107,13 @@ export function LoginForm({
           neo &&
             "neo-btn neo-btn--sky border-0 font-extrabold shadow-[4px_4px_0_0_var(--neo-raised)]",
         )}
-        disabled={busy}
+        loading={busy}
         aria-label={t("continueWithGoogleAria")}
         onClick={() => void signInWithGoogle()}
       >
-        <GoogleGlyph className="h-5 w-5 shrink-0" aria-hidden />
+        {!busy ? (
+          <GoogleGlyph className="h-5 w-5 shrink-0" aria-hidden />
+        ) : null}
         {busy ? t("redirecting") : t("continueWithGoogle")}
       </Button>
       {message ? (

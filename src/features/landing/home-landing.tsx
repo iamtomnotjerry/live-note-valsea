@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { LiveAppNavLink } from "@/features/live-note/live-app-nav-link";
 import { cn } from "@/lib/utils";
 
 function IconMic({ className }: { className?: string }) {
@@ -270,10 +270,10 @@ export async function HomeLanding() {
               className="flex flex-wrap gap-3 motion-safe:animate-landing-fade-up motion-reduce:animate-none"
               style={{ animationDelay: "360ms" }}
             >
-              <Link className="neo-btn neo-btn--mint" href="/live">
+              <LiveAppNavLink className="neo-btn neo-btn--mint" href="/live">
                 {t("ctaLive")}
                 <span aria-hidden>→</span>
-              </Link>
+              </LiveAppNavLink>
               <a
                 className="neo-btn neo-btn--sky"
                 href="https://valsea.ai/docs"
@@ -355,13 +355,13 @@ export async function HomeLanding() {
                 </div>
               </div>
             </div>
-            <Link
+            <LiveAppNavLink
               className="neo-btn neo-btn--mint mt-6 w-full text-sm sm:text-base"
               href="/live"
             >
               {t("progressCta")}
               <span aria-hidden>→</span>
-            </Link>
+            </LiveAppNavLink>
           </div>
         </section>
 
@@ -486,10 +486,13 @@ export async function HomeLanding() {
             ))}
           </ul>
           <div className="mt-10 text-center">
-            <Link className="neo-btn neo-btn--sky mx-auto text-sm" href="/live">
+            <LiveAppNavLink
+              className="neo-btn neo-btn--sky mx-auto text-sm"
+              href="/live"
+            >
               {t("viewAll")}
               <span aria-hidden>→</span>
-            </Link>
+            </LiveAppNavLink>
           </div>
         </div>
       </section>
@@ -592,10 +595,13 @@ export async function HomeLanding() {
             {t("closingSub")}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link className="neo-btn neo-btn--mint px-8 py-4" href="/live">
+            <LiveAppNavLink
+              className="neo-btn neo-btn--mint px-8 py-4"
+              href="/live"
+            >
               {t("closingCta")}
               <span aria-hidden>→</span>
-            </Link>
+            </LiveAppNavLink>
             <a
               className="neo-btn neo-btn--sky px-8 py-4"
               href="https://valsea.ai/docs"

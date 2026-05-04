@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { User } from "@supabase/supabase-js";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { Link } from "@/i18n/navigation";
+import { NavLink } from "@/components/navigation/nav-link";
 import { buttonClassName } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -110,7 +110,7 @@ export function HeaderAuth({ headerTone = "default" }: HeaderAuthProps) {
 
   if (!user) {
     return (
-      <Link
+      <NavLink
         href="/login"
         className={cn(
           "cursor-pointer text-[var(--muted-fg)] transition-colors duration-200 hover:text-[var(--foreground)]",
@@ -119,7 +119,7 @@ export function HeaderAuth({ headerTone = "default" }: HeaderAuthProps) {
         )}
       >
         {t("login")}
-      </Link>
+      </NavLink>
     );
   }
 
@@ -167,7 +167,7 @@ export function HeaderAuth({ headerTone = "default" }: HeaderAuthProps) {
           <p className="max-w-[14rem] truncate px-3 py-2 text-xs text-[var(--muted-fg)]">
             {label}
           </p>
-          <Link
+          <NavLink
             href="/profile/folders"
             role="menuitem"
             className={cn(
@@ -181,7 +181,7 @@ export function HeaderAuth({ headerTone = "default" }: HeaderAuthProps) {
             onClick={() => setMenuOpen(false)}
           >
             {t("profile")}
-          </Link>
+          </NavLink>
           <div
             className={cn(
               "border-t border-[var(--border)] pt-1",

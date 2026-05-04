@@ -8,8 +8,12 @@
     "useLight": "Mode terang",
     "useDark": "Mode gelap"
   },
+  "Loading": {
+    "pageAria": "Memuat halaman"
+  },
   "LocaleSwitcher": {
     "label": "Bahasa",
+    "switching": "Mengganti bahasa…",
     "vi": "Tiếng Việt",
     "en": "English",
     "id": "Bahasa Indonesia",

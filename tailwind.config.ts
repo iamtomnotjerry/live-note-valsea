@@ -31,12 +31,17 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
         },
+        "route-bar": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(350%)" },
+        },
       },
       animation: {
         "landing-fade-up": "landing-fade-up 0.7s ease-out both",
         "landing-progress": "landing-progress 5s ease-in-out infinite",
         "landing-partial": "landing-partial 2.5s ease-in-out infinite",
         "landing-soft-float": "landing-soft-float 8s ease-in-out infinite",
+        "route-bar": "route-bar 1s ease-in-out infinite",
       },
     },
   },

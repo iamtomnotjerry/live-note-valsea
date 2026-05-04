@@ -2,8 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { LoginForm } from "@/features/auth/login-form";
+import { LiveAppNavLink } from "@/features/live-note/live-app-nav-link";
 import { trySanitizeAuthRedirect } from "@/lib/auth-redirect";
-import { Link } from "@/i18n/navigation";
 
 function safeInternalPath(p: string | undefined): string | undefined {
   if (!p?.trim()) return undefined;
@@ -37,12 +37,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 {t("subtitle")}
               </p>
             </div>
-            <Link
+            <LiveAppNavLink
               className="neo-btn neo-btn--ghost shrink-0 text-sm no-underline"
               href="/live"
             >
               {t("backLive")}
-            </Link>
+            </LiveAppNavLink>
           </div>
           <LoginForm
             tone="landing"

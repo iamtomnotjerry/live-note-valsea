@@ -8,8 +8,12 @@
     "useLight": "โหมดสว่าง",
     "useDark": "โหมดมืด"
   },
+  "Loading": {
+    "pageAria": "กำลังโหลดหน้า"
+  },
   "LocaleSwitcher": {
     "label": "ภาษา",
+    "switching": "กำลังเปลี่ยนภาษา…",
     "vi": "Tiếng Việt",
     "en": "English",
     "id": "Bahasa Indonesia",

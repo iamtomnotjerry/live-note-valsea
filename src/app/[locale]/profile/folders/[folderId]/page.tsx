@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Link } from "@/i18n/navigation";
+import { NavLink } from "@/components/navigation/nav-link";
 import { ProfileNotesLibrary } from "@/features/profile/profile-notes-library";
 import { ProfileNotesPagination } from "@/features/profile/profile-notes-pagination";
 import {
@@ -65,12 +65,12 @@ export default async function ProfileFolderNotesPage({
       <header className="mb-8 flex flex-col gap-3 border-b border-[var(--border)] pb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-wide text-[var(--muted-fg)]">
-            <Link
+            <NavLink
               href="/profile/folders"
               className="text-[var(--muted-fg)] underline-offset-2 hover:text-[var(--foreground)] hover:underline"
             >
               {t("editorBreadcrumbFolders")}
-            </Link>
+            </NavLink>
           </p>
           <h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">
             {heading}
@@ -79,14 +79,14 @@ export default async function ProfileFolderNotesPage({
             {t("folderNotesLead")}
           </p>
         </div>
-        <Link
+        <NavLink
           href="/profile/notes"
           className={cn(
             "shrink-0 text-sm font-extrabold text-[var(--muted-fg)] underline-offset-2 hover:text-[var(--foreground)] hover:underline",
           )}
         >
           {t("folderViewAllNotes")}
-        </Link>
+        </NavLink>
       </header>
 
       <ProfileNotesLibrary

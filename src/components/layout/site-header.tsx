@@ -1,9 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { HeaderAuth } from "@/components/layout/header-auth";
+import { SiteHeaderBrandLink } from "@/components/layout/site-header-brand-link";
+import { SiteHeaderNav } from "@/components/layout/site-header-nav";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
-import { Link } from "@/i18n/navigation";
 
 type SiteHeaderProps = {
   className?: string;
@@ -35,43 +36,21 @@ export async function SiteHeader({
             : "min-h-[3.75rem] py-2.5 sm:min-h-[4.25rem] sm:py-3",
         )}
       >
-        <Link
-          href="/"
-          className="min-w-0 shrink-0 truncate text-left text-sm font-extrabold tracking-tight text-[var(--foreground)] sm:text-base"
+        <SiteHeaderBrandLink
           title={tMeta("title")}
-        >
-          {t("brandTitle")}
-        </Link>
+          brandTitle={t("brandTitle")}
+          className="min-w-0 shrink-0 truncate text-left text-sm font-extrabold tracking-tight text-[var(--foreground)] sm:text-base"
+        />
         <nav
           aria-label={t("navLabel")}
           className="flex min-w-0 flex-wrap items-center justify-center justify-self-center gap-x-2 gap-y-1 text-xs font-bold sm:gap-x-4 sm:text-sm"
         >
-          <Link
-            href="/#features"
-            className="hidden cursor-pointer text-[var(--muted-fg)] transition-colors duration-200 hover:text-[var(--foreground)] md:inline"
-          >
-            {t("navFeatures")}
-          </Link>
-          <Link
-            href="/#why"
-            className="hidden cursor-pointer text-[var(--muted-fg)] transition-colors duration-200 hover:text-[var(--foreground)] lg:inline"
-          >
-            {t("navWhy")}
-          </Link>
-          <Link
-            href="/live"
-            className="cursor-pointer text-[var(--muted-fg)] transition-colors duration-200 hover:text-[var(--foreground)]"
-          >
-            {t("live")}
-          </Link>
-          <a
-            href="https://valsea.ai/docs"
-            className="hidden cursor-pointer text-[var(--muted-fg)] transition-colors duration-200 hover:text-[var(--foreground)] sm:inline"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {t("valseaApi")}
-          </a>
+          <SiteHeaderNav
+            navFeatures={t("navFeatures")}
+            navWhy={t("navWhy")}
+            live={t("live")}
+            valseaApi={t("valseaApi")}
+          />
         </nav>
         <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-2.5">
           <ThemeToggle />

@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { NavLink } from "@/components/navigation/nav-link";
 import { FolderManageTile } from "@/features/profile/folder-manage-tile";
 import { FoldersCreateForm } from "@/features/profile/folders-create-form";
 import { listFolderSummariesWithCounts } from "@/features/profile/transcript-session-actions";
@@ -46,7 +46,7 @@ export default async function ProfileFoldersPage() {
         </h2>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <li>
-            <Link
+            <NavLink
               href="/profile/folders/uncategorized"
               className={cn(
                 "flex h-full min-h-[7.5rem] flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--background)] p-4 text-left shadow-sm transition-all hover:border-[var(--foreground)]/25 hover:shadow-md",
@@ -59,7 +59,7 @@ export default async function ProfileFoldersPage() {
               <span className="mt-3 text-sm font-bold text-[var(--muted-fg)]">
                 {t("foldersNoteCount", { count: uncategorizedCount })}
               </span>
-            </Link>
+            </NavLink>
           </li>
           {folders.map((f) => (
             <li key={f.id}>

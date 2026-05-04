@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { NavLink } from "@/components/navigation/nav-link";
 import { listNoteFolders } from "@/features/live-note/note-folder-actions";
 import type { TranscriptSessionEditor } from "@/features/profile/transcript-session-actions";
 import { NoteValseaToolbar } from "@/features/profile/note-valsea-toolbar";
@@ -114,21 +114,21 @@ export function NoteEditorForm({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-2 text-sm">
-        <Link
+        <NavLink
           href="/profile/folders"
           className="font-bold text-[var(--muted-fg)] underline-offset-2 hover:text-[var(--foreground)] hover:underline"
         >
           {t("editorBreadcrumbFolders")}
-        </Link>
+        </NavLink>
         <span className="text-[var(--muted-fg)]" aria-hidden>
           /
         </span>
-        <Link
+        <NavLink
           href="/profile/notes"
           className="font-bold text-[var(--muted-fg)] underline-offset-2 hover:text-[var(--foreground)] hover:underline"
         >
           {t("editorBreadcrumbAllNotes")}
-        </Link>
+        </NavLink>
         <span className="text-[var(--muted-fg)]" aria-hidden>
           /
         </span>
@@ -162,7 +162,8 @@ export function NoteEditorForm({
             type="button"
             variant="ghost"
             className={cn(neo && "neo-btn neo-btn--ghost font-extrabold")}
-            disabled={saving || !dirty}
+            loading={saving}
+            disabled={!dirty}
             onClick={() => void handleSave()}
           >
             {saving ? t("editorSaving") : t("editorSave")}
@@ -174,7 +175,7 @@ export function NoteEditorForm({
               neo &&
                 "neo-btn neo-btn--ghost font-extrabold text-red-700 dark:text-red-400",
             )}
-            disabled={deleting}
+            loading={deleting}
             onClick={() => void handleDelete()}
           >
             {deleting ? t("editorDeleting") : t("editorDelete")}

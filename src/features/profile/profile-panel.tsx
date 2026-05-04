@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { User } from "@supabase/supabase-js";
-import { Link } from "@/i18n/navigation";
+import { LiveAppNavLink } from "@/features/live-note/live-app-nav-link";
 import {
   profileAvatarUrl,
   profileDisplayName,
@@ -103,7 +103,7 @@ export async function ProfilePanel({
       </dl>
 
       <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-        <Link
+        <LiveAppNavLink
           href="/live"
           className={cn(
             "text-sm font-bold text-[var(--muted-fg)] underline-offset-4 transition-colors hover:text-[var(--foreground)] hover:underline",
@@ -111,7 +111,7 @@ export async function ProfilePanel({
           )}
         >
           {t("backLive")}
-        </Link>
+        </LiveAppNavLink>
       </div>
     </div>
   );

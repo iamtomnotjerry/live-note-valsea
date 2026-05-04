@@ -2,7 +2,8 @@
 
 import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { NavLink } from "@/components/navigation/nav-link";
 import {
   deleteNoteFolder,
   renameNoteFolder,
@@ -107,7 +108,8 @@ export function FolderManageTile({
                 type="button"
                 variant="secondary"
                 className={cn(neo && "neo-btn neo-btn--sky font-extrabold")}
-                disabled={busy || !draft.trim()}
+                loading={busy}
+                disabled={!draft.trim()}
                 onClick={() => void submitRename()}
               >
                 {busy ? t("folderRenameSaving") : t("folderRenameSave")}
@@ -125,7 +127,7 @@ export function FolderManageTile({
           </div>
         ) : (
           <>
-            <Link
+            <NavLink
               href={`/profile/folders/${folderId}`}
               className="block min-w-0 flex-1 text-left outline-none ring-[var(--ring)] focus-visible:rounded-md focus-visible:ring-2"
             >
@@ -135,7 +137,7 @@ export function FolderManageTile({
               <span className="mt-3 block text-sm font-bold text-[var(--muted-fg)]">
                 {t("foldersNoteCount", { count: noteCount })}
               </span>
-            </Link>
+            </NavLink>
             <div className="mt-3 flex flex-wrap gap-2 border-t border-[var(--border)] pt-3">
               <Button
                 type="button"
@@ -160,7 +162,7 @@ export function FolderManageTile({
                   "text-xs font-extrabold text-red-700 dark:text-red-400",
                   neo && "neo-btn neo-btn--ghost",
                 )}
-                disabled={busy}
+                loading={busy}
                 onClick={() => void onDelete()}
               >
                 {t("folderDelete")}

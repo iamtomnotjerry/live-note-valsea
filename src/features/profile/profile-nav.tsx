@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
+import { NavLink } from "@/components/navigation/nav-link";
 import { cn } from "@/lib/utils";
 
 export function ProfileNav() {
@@ -23,23 +24,23 @@ export function ProfileNav() {
 
   return (
     <nav aria-label={t("navAria")} className="flex flex-col gap-1 lg:gap-0.5">
-      <Link href="/profile/folders" className={linkClass(onFolders)}>
+      <NavLink href="/profile/folders" className={linkClass(onFolders)}>
         {t("navFolders")}
-      </Link>
-      <Link href="/profile/notes" className={linkClass(onNotes)}>
+      </NavLink>
+      <NavLink href="/profile/notes" className={linkClass(onNotes)}>
         {t("navNotes")}
-      </Link>
-      <Link href="/profile/account" className={linkClass(onAccount)}>
+      </NavLink>
+      <NavLink href="/profile/account" className={linkClass(onAccount)}>
         {t("navAccount")}
-      </Link>
-      <Link
+      </NavLink>
+      <NavLink
         href="/live"
         className={cn(
           "mt-2 block rounded-xl px-3 py-2.5 text-sm font-bold text-[var(--muted-fg)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)] lg:mt-4",
         )}
       >
         {t("navLive")}
-      </Link>
+      </NavLink>
     </nav>
   );
 }

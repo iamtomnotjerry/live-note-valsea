@@ -255,7 +255,8 @@ export function SaveTranscriptDialog({
                   "shrink-0",
                   neo && "neo-btn neo-btn--ghost font-extrabold",
                 )}
-                disabled={creatingFolder || !newFolderName.trim()}
+                loading={creatingFolder}
+                disabled={!newFolderName.trim()}
                 onClick={() => void handleCreateFolder()}
               >
                 {creatingFolder
@@ -289,7 +290,7 @@ export function SaveTranscriptDialog({
             type="button"
             variant={neo ? "secondary" : "primary"}
             className={cn(neo && "neo-btn neo-btn--sky font-extrabold")}
-            disabled={saving}
+            loading={saving}
             onClick={() => void handleSave()}
           >
             {saving ? t("saveSaving") : t("saveDialogConfirm")}

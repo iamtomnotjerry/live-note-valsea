@@ -8,8 +8,12 @@
     "useLight": "Chuyển giao diện sáng",
     "useDark": "Chuyển giao diện tối"
   },
+  "Loading": {
+    "pageAria": "Đang tải trang"
+  },
   "LocaleSwitcher": {
     "label": "Ngôn ngữ",
+    "switching": "Đang đổi ngôn ngữ…",
     "vi": "Tiếng Việt",
     "en": "English",
     "id": "Bahasa Indonesia",

@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { LiveAppNavLink } from "@/features/live-note/live-app-nav-link";
 import { LiveRttPanel } from "@/features/live-note/live-rtt-panel";
-import { Link } from "@/i18n/navigation";
 
 export default async function LivePage() {
   const t = await getTranslations("LivePage");
@@ -23,12 +23,12 @@ export default async function LivePage() {
               {t("subtitle")}
             </p>
           </div>
-          <Link
-            className="neo-btn neo-btn--ghost shrink-0 text-sm no-underline"
+          <LiveAppNavLink
             href="/"
+            className="neo-btn neo-btn--ghost shrink-0 text-sm no-underline"
           >
             {t("backHome")}
-          </Link>
+          </LiveAppNavLink>
         </div>
         <LiveRttPanel tone="landing" />
       </main>

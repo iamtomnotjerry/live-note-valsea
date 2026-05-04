@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { LiveAppNavLink } from "@/features/live-note/live-app-nav-link";
+import { LibraryNoteCard } from "@/features/profile/library-note-card";
 import type { TranscriptSessionListItem } from "@/features/profile/transcript-session-actions";
 import { cn } from "@/lib/utils";
 
@@ -37,39 +38,6 @@ function groupByFolder(sessions: TranscriptSessionListItem[]) {
   return { uncategorized, folders: [...byFolder.entries()] };
 }
 
-type LibraryNoteCardProps = {
-  s: TranscriptSessionListItem;
-  neo: boolean;
-  untitled: string;
-  formatNoteUpdated: (iso: string) => string;
-};
-
-function LibraryNoteCard({
-  s,
-  neo,
-  untitled,
-  formatNoteUpdated,
-}: LibraryNoteCardProps) {
-  const title = (s.title?.trim() || untitled).slice(0, 120);
-  return (
-    <Link
-      href={`/profile/notes/${s.id}`}
-      className={cn(
-        "block rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left shadow-sm transition-all hover:border-[var(--foreground)]/25 hover:shadow-md",
-        neo &&
-          "border-2 border-[var(--neo-ink)] shadow-[4px_4px_0_0_var(--neo-raised)] hover:translate-y-[-1px]",
-      )}
-    >
-      <p className="line-clamp-2 text-base font-extrabold leading-snug text-[var(--foreground)]">
-        {title}
-      </p>
-      <p className="mt-2 text-xs font-medium text-[var(--muted-fg)]">
-        {formatNoteUpdated(s.updated_at)}
-      </p>
-    </Link>
-  );
-}
-
 type LibrarySectionProps = {
   heading: string;
   items: TranscriptSessionListItem[];
@@ -98,7 +66,7 @@ function LibrarySection({
               s={s}
               neo={neo}
               untitled={untitled}
-              formatNoteUpdated={formatNoteUpdated}
+              updatedLabel={formatNoteUpdated(s.updated_at)}
             />
           </li>
         ))}
@@ -149,7 +117,7 @@ export async function ProfileNotesLibrary({
             ? t("folderEmptyBody")
             : t("libraryEmptyBody")}
         </p>
-        <Link
+        <LiveAppNavLink
           href="/live"
           className={cn(
             "mt-6 inline-flex rounded-full border border-[var(--border)] bg-[var(--background)] px-5 py-2.5 text-sm font-extrabold text-[var(--foreground)] no-underline transition-colors hover:bg-[var(--muted)]",
@@ -157,7 +125,7 @@ export async function ProfileNotesLibrary({
           )}
         >
           {t("libraryEmptyCta")}
-        </Link>
+        </LiveAppNavLink>
       </div>
     );
   }
@@ -171,7 +139,7 @@ export async function ProfileNotesLibrary({
               s={s}
               neo={neo}
               untitled={untitled}
-              formatNoteUpdated={formatNoteUpdated}
+              updatedLabel={formatNoteUpdated(s.updated_at)}
             />
           </li>
         ))}
