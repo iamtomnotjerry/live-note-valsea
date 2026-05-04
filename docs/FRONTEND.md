@@ -30,6 +30,20 @@
 - Nút **`ThemeToggle`** trên header; trạng thái lưu theo cookie/local của `next-themes`.
 - Token màu landing: `[data-landing="true"]` và `.dark [data-landing="true"]` trong `globals.css` (pastel campus + dark tím ấm). Trang **`/`**, **`/live`**, **`/login`** dùng wrapper `data-landing` + `landing-gradient-bg`; **`SiteHeader`** / **`SiteFooter`** nhận `tone="landing"`; panel/form RTT và đăng nhập có prop tuỳ chọn **`tone="landing"`** (`LiveRttPanel`, `LoginForm`) để class neo (`neo-card`, `neo-btn`, …) khớp landing — mặc định `default` ở chỗ khác.
 
+### Neo / clay trên landing (dark mode & contrast)
+
+- **`--neo-btn-text`:** mực tối cho nút **nền pastel** (mint/sky). **Không** dùng cho nút ghost trên `--surface`.
+- **`.neo-pill`:** chỉ viền + bóng + bo góc — **không** gán `background` trong CSS, để utility `bg-[var(--landing-sky)]` / `bg-[var(--surface)]` thắng (tránh selector `[data-landing] .neo-pill` đè mất `bg-*` một class).
+- **`.neo-btn.neo-btn--ghost`:** `color: var(--foreground)` (độ ưu tiên cao hơn rule chung `.neo-btn { color: var(--neo-btn-text) }`).
+- **`.neo-btn.neo-btn--ghost.neo-btn--destructive`:** màu đỏ rõ (huỷ / xoá) trên nền landing tối — dùng ở tile folder / editor khi cần.
+
+## Responsive & viewport
+
+- **`export const viewport`** trong `app/layout.tsx` (`width: device-width`, `initialScale: 1`, `viewportFit: cover`) — chuẩn Next.js, hỗ trợ `env(safe-area-inset-*)` khi cần.
+- **`html`:** `-webkit-text-size-adjust: 100%` trong `globals.css` (iOS không tự phóng to chữ làm vỡ layout).
+- **`SiteHeader`:** dưới `md`, lưới hai hàng — hàng 1 logo + theme / locale / auth; hàng 2 nav full width (tránh ép ba cột trên màn hẹp).
+- **Chi tiết khác:** `LocaleSwitcher` `min-w-0` + `max-w` responsive; menu account `max-w` theo viewport; dialog lưu note thêm padding đáy theo safe-area; vùng flex dài (`LiveRttPanel` toolbar, v.v.) thêm `min-w-0` khi cần để text không tràn ngang.
+
 ## Tailwind
 
 - **`tailwind.config.ts` → `content`:** phải gồm `src/features/**` (ví dụ landing) — nếu thiếu, mọi utility trong feature không được build và UI trông “vỡ” hoàn toàn.

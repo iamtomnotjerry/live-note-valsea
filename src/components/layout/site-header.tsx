@@ -30,7 +30,9 @@ export async function SiteHeader({
     >
       <div
         className={cn(
-          "mx-auto grid max-w-6xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-2 px-4 sm:gap-x-4 sm:px-6",
+          "mx-auto grid max-w-6xl items-center gap-x-2 gap-y-3 px-4 sm:gap-x-4 sm:px-6",
+          // Narrow viewports: row 1 = brand + utilities; row 2 = nav full width (avoids crushing the center column).
+          "grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-y-2",
           tone === "landing"
             ? "neo-header-shell mt-3 min-h-[3.75rem] py-2.5 sm:mt-4 sm:min-h-[4.25rem] sm:py-3"
             : "min-h-[3.75rem] py-2.5 sm:min-h-[4.25rem] sm:py-3",
@@ -39,11 +41,11 @@ export async function SiteHeader({
         <SiteHeaderBrandLink
           title={tMeta("title")}
           brandTitle={t("brandTitle")}
-          className="min-w-0 shrink-0 truncate text-left text-sm font-extrabold tracking-tight text-[var(--foreground)] sm:text-base"
+          className="col-start-1 row-start-1 min-w-0 truncate text-left text-sm font-extrabold tracking-tight text-[var(--foreground)] sm:text-base md:shrink-0"
         />
         <nav
           aria-label={t("navLabel")}
-          className="flex min-w-0 flex-wrap items-center justify-center justify-self-center gap-x-2 gap-y-1 text-xs font-bold sm:gap-x-4 sm:text-sm"
+          className="col-span-2 row-start-2 flex min-w-0 flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs font-bold sm:gap-x-4 sm:text-sm md:col-span-1 md:col-start-2 md:row-start-1 md:justify-self-center"
         >
           <SiteHeaderNav
             navFeatures={t("navFeatures")}
@@ -52,7 +54,7 @@ export async function SiteHeader({
             valseaApi={t("valseaApi")}
           />
         </nav>
-        <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-2.5">
+        <div className="col-start-2 row-start-1 flex shrink-0 items-center justify-end gap-1.5 sm:gap-2.5 md:col-start-3 md:row-start-1">
           <ThemeToggle />
           <LocaleSwitcher />
           <HeaderAuth headerTone={tone} />

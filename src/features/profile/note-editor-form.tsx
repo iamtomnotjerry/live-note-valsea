@@ -173,7 +173,7 @@ export function NoteEditorForm({
             variant="secondary"
             className={cn(
               neo &&
-                "neo-btn neo-btn--ghost font-extrabold text-red-700 dark:text-red-400",
+                "neo-btn neo-btn--ghost neo-btn--destructive font-extrabold text-red-700 dark:text-red-400",
             )}
             loading={deleting}
             onClick={() => void handleDelete()}

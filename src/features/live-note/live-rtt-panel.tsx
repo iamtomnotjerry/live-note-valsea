@@ -508,7 +508,7 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
             </CardDescription>
           </div>
           {finalSegments.length > 0 || currentPartial.trim() ? (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <Button
                 type="button"
                 variant="ghost"

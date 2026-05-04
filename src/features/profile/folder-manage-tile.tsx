@@ -160,7 +160,7 @@ export function FolderManageTile({
                 variant="ghost"
                 className={cn(
                   "text-xs font-extrabold text-red-700 dark:text-red-400",
-                  neo && "neo-btn neo-btn--ghost",
+                  neo && "neo-btn neo-btn--ghost neo-btn--destructive",
                 )}
                 loading={busy}
                 onClick={() => void onDelete()}

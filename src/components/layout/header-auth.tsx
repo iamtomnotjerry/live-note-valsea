@@ -158,7 +158,7 @@ export function HeaderAuth({ headerTone = "default" }: HeaderAuthProps) {
       {menuOpen ? (
         <div
           className={cn(
-            "absolute right-0 top-[calc(100%+6px)] z-[60] min-w-[12.5rem] rounded-xl border border-[var(--border)] bg-[var(--surface)] py-1.5 text-left shadow-lg",
+            "absolute right-0 top-[calc(100%+6px)] z-[60] min-w-[12.5rem] max-w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-[var(--border)] bg-[var(--surface)] py-1.5 text-left shadow-lg",
             neo &&
               "border-2 border-[var(--neo-ink)] shadow-[6px_6px_0_0_var(--neo-raised)]",
           )}

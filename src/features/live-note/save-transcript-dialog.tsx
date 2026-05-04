@@ -146,7 +146,7 @@ export function SaveTranscriptDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/45 p-4 sm:items-center"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/45 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] sm:items-center"
       role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();

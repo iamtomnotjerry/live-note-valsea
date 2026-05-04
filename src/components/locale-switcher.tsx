@@ -15,7 +15,7 @@ export function LocaleSwitcher() {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="relative shrink-0">
+    <div className="relative min-w-0 shrink-0">
       <label className="sr-only" htmlFor="locale-switch">
         {t("label")}
       </label>
@@ -28,7 +28,7 @@ export function LocaleSwitcher() {
         aria-busy={isPending || undefined}
         disabled={isPending}
         className={cn(
-          "max-w-[10.5rem] cursor-pointer truncate rounded-full border border-[var(--border)] bg-[var(--surface)] py-1.5 pl-2.5 pr-7 text-xs font-bold text-[var(--foreground)] shadow-sm transition-colors duration-200 hover:bg-[var(--muted)] disabled:cursor-wait disabled:opacity-80",
+          "max-w-[min(10.5rem,calc(100vw-11rem))] cursor-pointer truncate rounded-full border border-[var(--border)] bg-[var(--surface)] py-1.5 pl-2.5 pr-7 text-xs font-bold text-[var(--foreground)] shadow-sm transition-colors duration-200 hover:bg-[var(--muted)] disabled:cursor-wait disabled:opacity-80 md:max-w-[10.5rem]",
           "appearance-none bg-[length:0.65rem] bg-[right_0.45rem_center] bg-no-repeat",
         )}
         style={{

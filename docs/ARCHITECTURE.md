@@ -12,7 +12,7 @@
 
 | Đường dẫn                          | Vai trò                                                                                                                                                                                               |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `app/layout.tsx`                   | Root: `<html lang suppressHydrationWarning>`, font, `ThemeProvider`, `globals.css`.                                                                                                                   |
+| `app/layout.tsx`                   | Root: `<html lang suppressHydrationWarning>`, font, `ThemeProvider`, `globals.css`; **`export const viewport`** (device-width, `viewportFit: cover`).                                                 |
 | `app/[locale]/layout.tsx`          | `NextIntlClientProvider`, **`RouteTransitionProgress`** (thanh tải khi click link nội bộ), `setRequestLocale`, metadata theo locale.                                                                  |
 | `app/[locale]/loading.tsx`         | Skeleton + `aria-busy` khi chuyển route trong segment `[locale]` (App Router `loading.js`).                                                                                                           |
 | `app/[locale]/page.tsx`            | Trang chủ (theo locale).                                                                                                                                                                              |

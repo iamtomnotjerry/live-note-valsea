@@ -1,7 +1,14 @@
 import { JetBrains_Mono, Noto_Sans_Thai, Nunito } from "next/font/google";
+import type { Viewport } from "next";
 import { getLocale } from "next-intl/server";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 const fontSans = Nunito({
   variable: "--font-sans",

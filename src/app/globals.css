@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile / zoom: predictable text scaling; pairs with `viewportFit: cover` for safe-area env() */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 /* Base app (live tool & default surfaces) */
 :root {
   --background: #f8f7ff;
@@ -247,10 +253,11 @@
       0 22px 44px -14px rgba(0, 0, 0, 0.5);
   }
 
+  /* Background is not set here — let utilities (`bg-*`) win; a bare attribute+class
+   * selector would otherwise override single-class Tailwind backgrounds. */
   [data-landing="true"] .neo-pill {
     border-radius: 9999px;
     border: 2px solid var(--neo-ink);
-    background: var(--surface);
     box-shadow: 4px 4px 0 0 var(--neo-raised);
   }
 
@@ -297,6 +304,20 @@
 
   [data-landing="true"] .neo-btn--ghost {
     background: var(--surface);
+  }
+
+  /* Ghost sits on `--surface`; ink must follow `--foreground` (not `--neo-btn-text`,
+   * which is for pastel mint/sky fills). Higher specificity than `.neo-btn` alone. */
+  [data-landing="true"] .neo-btn.neo-btn--ghost {
+    color: var(--foreground);
+  }
+
+  [data-landing="true"] .neo-btn.neo-btn--ghost.neo-btn--destructive {
+    color: #b91c1c;
+  }
+
+  .dark [data-landing="true"] .neo-btn.neo-btn--ghost.neo-btn--destructive {
+    color: #f87171;
   }
 
   [data-landing="true"] .neo-icon-tile {

@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     >
       <SiteHeader tone="landing" />
       <main className="mx-auto w-full max-w-lg flex-1 px-4 py-10 sm:px-6">
-        <div className="neo-card px-6 py-8 sm:px-8 sm:py-10">
+        <div className="neo-card px-4 py-8 sm:px-8 sm:py-10">
           <div className="mb-8 flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">

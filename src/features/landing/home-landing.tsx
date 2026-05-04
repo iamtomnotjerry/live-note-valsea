@@ -373,7 +373,7 @@ export async function HomeLanding() {
             <li key={s.label}>
               <div
                 className={cn(
-                  "neo-pill flex items-center gap-3 bg-white px-4 py-3 motion-safe:animate-landing-fade-up motion-reduce:animate-none",
+                  "neo-pill flex items-center gap-3 bg-[var(--surface)] px-4 py-3 motion-safe:animate-landing-fade-up motion-reduce:animate-none",
                 )}
                 style={{ animationDelay: `${420 + i * 90}ms` }}
               >
