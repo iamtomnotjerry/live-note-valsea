@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { listNoteFolders } from "@/features/live-note/note-folder-actions";
 import type { TranscriptSessionEditor } from "@/features/profile/transcript-session-actions";
+import { NoteValseaToolbar } from "@/features/profile/note-valsea-toolbar";
 import {
   deleteTranscriptSession,
   updateTranscriptSession,
@@ -213,6 +214,14 @@ export function NoteEditorForm({
           {t("editorRefreshFolders")}
         </button>
       </div>
+
+      <NoteValseaToolbar
+        transcript={transcript}
+        setTranscript={setTranscript}
+        setMessage={setMessage}
+        setError={setError}
+        neo={neo}
+      />
 
       <label className="sr-only" htmlFor="note-body">
         {t("editorBodyLabel")}

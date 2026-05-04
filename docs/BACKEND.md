@@ -55,6 +55,18 @@ Copy `.env.example` → `.env.local` và điền giá trị từ Dashboard → S
 - **Biến:** `VALSEA_API_KEY`, `VALSEA_RT_PROXY_PORT` (optional), `NEXT_PUBLIC_VALSEA_RT_PROXY_URL` (URL proxy mà browser kết nối).
 - **Production:** cần proxy tương đựch (Worker / dịch vụ có WebSocket + secret) — không expose proxy không auth ra internet.
 
+### Clarify (REST) — transcript trong app
+
+- **Route:** [`src/app/api/valsea/clarify/route.ts`](../src/app/api/valsea/clarify/route.ts) — `POST` JSON `{ text, language? }` → upstream [`POST /v1/clarifications`](https://valsea.ai/docs/api/clarify) với `Authorization: Bearer` từ **`VALSEA_API_KEY`** (chỉ server; Vercel cần set env này để nút Clarify trên `/live` hoạt động).
+- **Client:** [`live-rtt-panel.tsx`](../src/features/live-note/live-rtt-panel.tsx) gọi `/api/valsea/clarify`, nhận `clarified_text` rồi thay nội dung transcript hiện tại.
+
+### Các REST VALSEA khác (ghi chú đã lưu)
+
+- **Route tổng:** [`src/app/api/valsea/tool/route.ts`](../src/app/api/valsea/tool/route.ts) — `POST` JSON `{ tool, … }` với `tool`: `clarify` | `translate` | `annotate` | `convert` | `format` | `sentiment` — proxy tới `https://api.valsea.ai/v1/…` tương ứng ([API Reference](https://valsea.ai/docs/api)).
+- **Transcribe (file âm thanh):** [`src/app/api/valsea/transcribe/route.ts`](../src/app/api/valsea/transcribe/route.ts) — `POST` `multipart/form-data` (`file`, `language`).
+- **UI:** [`note-valsea-toolbar.tsx`](../src/features/profile/note-valsea-toolbar.tsx) trên trang chỉnh sửa note (`/profile/notes/[id]`).
+- **Chung:** [`src/lib/valsea-api.ts`](../src/lib/valsea-api.ts) — `valseaPostJson` / `valseaPostMultipart`, parse response format.
+
 ## Vercel
 
 - Project Settings → Environment Variables: thêm các biến giống `.env.local`.

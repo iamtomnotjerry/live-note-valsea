@@ -41,6 +41,7 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
   const [status, setStatus] = useState(() => t("statusReady"));
   const [error, setError] = useState<string | null>(null);
   const [copyDone, setCopyDone] = useState(false);
+  const [clarifyLoading, setClarifyLoading] = useState(false);
   const [lastSavedId, setLastSavedId] = useState<string | null>(null);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [saveDialogTranscript, setSaveDialogTranscript] = useState("");
@@ -166,6 +167,45 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
       setError(t("copyFailed"));
     }
   }, [buildTranscriptExport, t]);
+
+  const buildClarifyInput = useCallback(() => {
+    const finals = finalSegments.join(" ").trim();
+    const partial = currentPartial.trim();
+    return [finals, partial].filter(Boolean).join(" ").trim();
+  }, [currentPartial, finalSegments]);
+
+  const clarifyTranscript = useCallback(async () => {
+    if (running) return;
+    const text = buildClarifyInput();
+    if (!text) return;
+    setClarifyLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/valsea/clarify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, language: asrLanguage }),
+      });
+      const data = (await res.json().catch(() => null)) as {
+        clarified_text?: string;
+        error?: string;
+      } | null;
+      if (!res.ok || !data?.clarified_text?.trim()) {
+        setError(
+          res.status === 503 ? t("clarifyNotConfigured") : t("clarifyFailed"),
+        );
+        return;
+      }
+      setFinalSegments([data.clarified_text.trim()]);
+      setCurrentPartial("");
+      setLastSavedId(null);
+      setShowLoginCta(false);
+    } catch {
+      setError(t("clarifyFailed"));
+    } finally {
+      setClarifyLoading(false);
+    }
+  }, [asrLanguage, buildClarifyInput, running, t]);
 
   const downloadTranscript = useCallback(() => {
     const text = buildTranscriptExport();
@@ -506,6 +546,20 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
                 onClick={clearTranscript}
               >
                 {t("clearNotes")}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className={cn(
+                  "px-3 py-2 text-xs",
+                  neo && "neo-btn neo-btn--ghost font-extrabold",
+                )}
+                aria-label={t("clarifyAria")}
+                disabled={running || clarifyLoading || !buildClarifyInput()}
+                title={running ? t("clarifyWhileRecordingHint") : undefined}
+                onClick={() => void clarifyTranscript()}
+              >
+                {clarifyLoading ? t("clarifying") : t("clarify")}
               </Button>
               {!sessionChecked ? (
                 <span

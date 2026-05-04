@@ -197,6 +197,12 @@ id.Rtt = {
   downloadTxt: "Unduh file teks",
   exportPartialBanner: "--- Masih direkam (bisa berubah) ---",
   saveSuccess: "Disimpan ke akun Anda.",
+  clarify: "Perjelas",
+  clarifyAria: "Perbaiki transkrip dengan VALSEA Clarify",
+  clarifying: "Memperjelas…",
+  clarifyFailed: "Tidak dapat memperjelas transkrip. Coba lagi.",
+  clarifyNotConfigured: "Perlu VALSEA_API_KEY di server (mis. env Vercel).",
+  clarifyWhileRecordingHint: "Hentikan rekaman sebelum memperjelas.",
 };
 id.Login = {
   title: "Masuk",
@@ -374,6 +380,13 @@ th.Rtt = {
   downloadTxt: "ดาวน์โหลดไฟล์ข้อความ",
   exportPartialBanner: "--- ยังบันทึกอยู่ (อาจเปลี่ยน) ---",
   saveSuccess: "บันทึกลงบัญชีของคุณแล้ว",
+  clarify: "ขจัดความคลุมเครือ",
+  clarifyAria: "ปรับถอดความให้อ่านง่ายด้วย VALSEA Clarify",
+  clarifying: "กำลังปรับให้ชัด…",
+  clarifyFailed: "ปรับถอดความไม่สำเร็จ ลองอีกครั้ง",
+  clarifyNotConfigured:
+    "ต้องมี VALSEA_API_KEY บนเซิร์ฟเวอร์ (เช่น env บน Vercel)",
+  clarifyWhileRecordingHint: "หยุดบันทึกก่อนปรับให้ชัด",
 };
 th.Login = {
   title: "เข้าสู่ระบบ",
@@ -569,6 +582,12 @@ ms.Rtt = {
   downloadTxt: "Muat turun fail teks",
   exportPartialBanner: "--- Masih dirakam (boleh berubah) ---",
   saveSuccess: "Disimpan ke akaun anda.",
+  clarify: "Perjelas",
+  clarifyAria: "Perbaiki transkrip dengan VALSEA Clarify",
+  clarifying: "Memperjelas…",
+  clarifyFailed: "Tidak dapat memperjelas transkrip. Cuba lagi.",
+  clarifyNotConfigured: "Perlu VALSEA_API_KEY pada pelayan (cth. env Vercel).",
+  clarifyWhileRecordingHint: "Hentikan rakaman sebelum memperjelas.",
 };
 ms.Login = {
   title: "Log masuk",
