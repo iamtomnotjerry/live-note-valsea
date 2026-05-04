@@ -41,12 +41,12 @@ gh repo create <REPO> --private --source=. --remote=origin --push
 3. **Framework Preset:** Next.js (tự nhận).
 4. **Environment Variables** (Settings → Environment Variables), thêm **Production + Preview**:
 
-| Name                                   | Value              | Ghi chú                                                                 |
-| -------------------------------------- | ------------------ | ----------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`             | URL dự án Supabase | Settings → API                                                          |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`        | JWT anon `eyJ…`    | Public; **hoặc** dùng dòng dưới thay thế — app cần **ít nhất một** key. |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` | Public (Dashboard mới); xem `src/lib/env.ts` nếu không có anon.         |
-| `VALSEA_API_KEY`                       | `vl_…`             | **Server only**; proxy RTT / API route sau này.                         |
+| Name                                   | Value              | Ghi chú                                                                                          |
+| -------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`             | URL dự án Supabase | Settings → API                                                                                   |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`        | JWT anon `eyJ…`    | Public; **hoặc** dùng dòng dưới thay thế — app cần **ít nhất một** key.                          |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` | Public (Dashboard mới); xem `src/lib/env.ts` nếu không có anon.                                  |
+| `VALSEA_API_KEY`                       | `vl_…`             | **Server only**; Route Handler `/api/valsea/*` (clarify, tool, transcribe) + proxy RTT nếu dùng. |
 
 5. **Deploy.**
 

@@ -9,6 +9,16 @@
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public (tuỳ chọn)      | Thay thế / bổ sung anon: Dashboard mới có thể chỉ hiện publishable — app đọc qua `env.ts`. |
 | `SUPABASE_SERVICE_ROLE_KEY`            | Server-only (optional) | Chỉ dùng job admin / bypass RLS — **không** đặt prefix `NEXT_PUBLIC_`.                     |
 
+### VALSEA (tuỳ tính năng)
+
+| Biến                              | Phạm vi     | Mô tả                                                                                                                      |
+| --------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `VALSEA_API_KEY`                  | Server-only | Bearer gọi `https://api.valsea.ai/...` từ Route Handler (`/api/valsea/*`) và từ proxy RTT local. **Không** `NEXT_PUBLIC_`. |
+| `VALSEA_RT_PROXY_PORT`            | Dev (tuỳ)   | Cổng proxy WebSocket local; mặc định xem script + `npm run dev:rtt`.                                                       |
+| `NEXT_PUBLIC_VALSEA_RT_PROXY_URL` | Public      | URL `ws://` / `wss://` mà trình duyệt kết nối tới proxy RTT (local hoặc Render/Railway).                                   |
+
+Chi tiết luồng RTT, Clarify live, tool ghi chú: mục [API tích hợp VALSEA](#api-tích-hợp-valsea-hackathon) bên dưới.
+
 `getPublicEnv()` cần **URL + một khóa public hợp lệ**: ưu tiên `NEXT_PUBLIC_SUPABASE_ANON_KEY`, nếu thiếu thì dùng `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (xem [`src/lib/env.ts`](../src/lib/env.ts)).
 
 Copy `.env.example` → `.env.local` và điền giá trị từ Dashboard → Settings → API.
@@ -53,7 +63,7 @@ Copy `.env.example` → `.env.local` và điền giá trị từ Dashboard → S
 - **Dev:** chạy `npm run dev:rtt` — Next dev + [`scripts/valsea-rt-proxy.mjs`](../scripts/valsea-rt-proxy.mjs): proxy `ws://127.0.0.1:3331` → VALSEA với Bearer từ `VALSEA_API_KEY` (đọc `.env.local`).
 - **Client:** [`src/features/live-note/live-rtt-panel.tsx`](../src/features/live-note/live-rtt-panel.tsx) gửi `session.start` (`model: valsea-rtt`), sau đó `audio.append` (PCM 16 kHz mono, base64). Partial/final transcript như tài liệu VALSEA.
 - **Biến:** `VALSEA_API_KEY`, `VALSEA_RT_PROXY_PORT` (optional), `NEXT_PUBLIC_VALSEA_RT_PROXY_URL` (URL proxy mà browser kết nối).
-- **Production:** cần proxy tương đựch (Worker / dịch vụ có WebSocket + secret) — không expose proxy không auth ra internet.
+- **Production:** cần proxy tương đương (Worker / dịch vụ có WebSocket + secret) — không expose proxy không auth ra internet.
 
 ### Clarify (REST) — transcript trong app
 
@@ -62,10 +72,12 @@ Copy `.env.example` → `.env.local` và điền giá trị từ Dashboard → S
 
 ### Các REST VALSEA khác (ghi chú đã lưu)
 
-- **Route tổng:** [`src/app/api/valsea/tool/route.ts`](../src/app/api/valsea/tool/route.ts) — `POST` JSON `{ tool, … }` với `tool`: `clarify` | `translate` | `annotate` | `convert` | `format` | `sentiment` — proxy tới `https://api.valsea.ai/v1/…` tương ứng ([API Reference](https://valsea.ai/docs/api)).
+- **Route tổng:** [`src/app/api/valsea/tool/route.ts`](../src/app/api/valsea/tool/route.ts) — `POST` JSON `{ tool, … }` với `tool`: `clarify` | `translate` | `annotate` | `convert` | `format` | `sentiment` — proxy tới `https://api.valsea.ai/v1/…` tương ứng ([API Reference](https://valsea.ai/docs/api)). Ví dụ thân tin nhắn: `translate` cần `text`, `target`, `source`; `format` cần `transcript`, `output_type` (một trong các mã format đã whitelist trong route); `sentiment` cần `transcript`. Lỗi upstream: HTTP không thành công + JSON có thể có `error` (và `detail`) — client toolbar ưu tiên hiển thị `error` khi có.
 - **Transcribe (file âm thanh):** [`src/app/api/valsea/transcribe/route.ts`](../src/app/api/valsea/transcribe/route.ts) — `POST` `multipart/form-data` (`file`, `language`).
-- **UI:** [`note-valsea-toolbar.tsx`](../src/features/profile/note-valsea-toolbar.tsx) trên trang chỉnh sửa note (`/profile/notes/[id]`).
-- **Chung:** [`src/lib/valsea-api.ts`](../src/lib/valsea-api.ts) — `valseaPostJson` / `valseaPostMultipart`, parse response format.
+- **UI:** [`note-valsea-toolbar.tsx`](../src/features/profile/note-valsea-toolbar.tsx) + [`note-valsea-toolbar-icons.tsx`](../src/features/profile/note-valsea-toolbar-icons.tsx) trong [`note-editor-form.tsx`](../src/features/profile/note-editor-form.tsx) — trang chỉnh sửa note (`/profile/notes/[id]`). Nút icon (hover hiện nhãn), chọn ngôn ngữ dịch / kiểu format / ngôn ngữ audio; nút **thông tin** mở `<dialog>` hướng dẫn chi tiết (copy i18n namespace `Profile`, key `editorValseaGuide*`).
+- **Chung:** [`src/lib/valsea-api.ts`](../src/lib/valsea-api.ts) — `valseaPostJson` / `valseaPostMultipart`, `VALSEA_TEXT_MAX`, `parseFormatOutput`, v.v.
+
+**Lưu ý:** [`/api/valsea/clarify`](../src/app/api/valsea/clarify/route.ts) là route REST riêng cho luồng **live** (gọn payload); `/api/valsea/tool` với `tool: "clarify"` dùng chung pipeline tool cho **ghi chú đã lưu** — hai đường đều cần `VALSEA_API_KEY` trên server.
 
 ## Vercel
 

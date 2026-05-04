@@ -39,3 +39,4 @@
 - `components/ui/*`: primitive, không import feature-specific API.
 - `components/layout/*`: khung app (header kèm i18n).
 - Feature lớn: `src/features/<name>/` (xem `docs/ARCHITECTURE.md`). Trang **profile** (folders, notes, editor) dùng neo/clay **`tone="landing"`** giống live/login khi cần đồng bộ visual.
+- **VALSEA trên editor ghi chú:** `NoteValseaToolbar` gọi `/api/valsea/tool` và `/api/valsea/transcribe`; icon SVG tách file `note-valsea-toolbar-icons.tsx`; chuỗi UI và hộp hướng dẫn trong `messages/*.json` (`Profile.editorValsea*`, `editorValseaGuide*`). Chi tiết env và route: [`docs/BACKEND.md`](./BACKEND.md) (mục API tích hợp VALSEA).
