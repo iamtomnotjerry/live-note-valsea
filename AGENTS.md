@@ -16,6 +16,7 @@
 
 - **Server Components mặc định.** Chỉ thêm `"use client"` khi cần hook trình duyệt, sự kiện DOM, hoặc Supabase browser client.
 - **i18n:** không hardcode chuỗi UI. Thêm / sửa copy trong **`messages/{vi,en,id,th,ms}.json`** (cùng key). Locale SEA phụ (`id`, `th`, `ms`) có thể tái sinh từ `en.json` bằng `node scripts/gen-sea-ui-locales.mjs`. Server: `getTranslations('Namespace')`; client: `useTranslations('Namespace')`. Route nội bộ: **`Link` / `useRouter` / `usePathname` từ `@/i18n/navigation`**, không dùng `next/link` cho trang trong app. Chi tiết: `docs/I18N.md`.
+- **RSC → Client:** không truyền **function** (callback) từ Server Component xuống client — chỉ props serialize được (chuỗi, số, plain object); nếu cần format trên server, tính trước rồi truyền chuỗi (ví dụ `updatedLabel`). Loading route: `loading.tsx`; link pending: **`NavLink`** (`@/components/navigation/nav-link`). Xem `docs/ARCHITECTURE.md`, `docs/FRONTEND.md`.
 - **Không** đặt secret trong `NEXT_PUBLIC_*`. API key bên thứ ba (VALSEA, LLM) ưu tiên Route Handler server-side.
 - **Biến môi trường public** phải qua `getPublicEnv()` từ `@/lib/env` khi dùng trong code app (tránh `process.env` rải rác không validate).
 - **Class Tailwind:** dùng `cn()` từ `@/lib/utils`.

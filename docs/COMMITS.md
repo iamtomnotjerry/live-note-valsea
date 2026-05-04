@@ -30,6 +30,7 @@ Ngắn gọn theo khu vực: `auth`, `notes`, `api`, `ui`, `supabase`, `i18n` (c
 - `fix(supabase): refresh cookies in middleware`
 - `chore: bump next to 16.2.4`
 - `feat(i18n): add LocaleSwitcher strings for exam mode`
+- `feat(ui): route loading skeletons, nav progress, button loading states`
 
 ## Nguyên tắc
 

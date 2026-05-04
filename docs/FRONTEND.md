@@ -8,6 +8,8 @@
 4. **Focus:** Không xoá viền focus; `globals.css` có `:focus-visible` — component interactive phải thấy được khi điều hướng bàn phím.
 5. **Semantics:** Heading đúng cấp, landmark (`header`, `main`, `nav` + `aria-label` khi cần), `sr-only` cho tiêu đề section chỉ phục vụ screen reader. Nhãn `aria-label` của control đổi ngôn ngữ → lấy từ `messages` (ví dụ `LocaleSwitcher`).
 6. **Performance:** Ưu tiên Server Components; `"use client"` chỉ khi cần hook trình duyệt, event, state cục bộ, hoặc Supabase browser client.
+7. **Loading:** Route segment dùng **`loading.tsx`** (skeleton + `aria-busy`); nút bất đồng bộ dùng **`Button` `loading`** (spinner + `aria-busy`, tự `disabled`). Đổi ngôn ngữ: **`LocaleSwitcher`** bọc `router.replace` trong **`useTransition`** + `aria-busy` trên `<select>`.
+8. **RSC → Client:** không truyền **hàm** xuống Client Component (trừ Server Action đã `"use server"`). Truyền chuỗi / số / object JSON-safe đã tính sẵn trên server (ví dụ nhãn ngày đã format cho thẻ note).
 
 ## UI UX Pro Max (Cursor skill)
 
@@ -17,8 +19,8 @@
 
 - **Chi tiết và checklist mở rộng locale:** [`docs/I18N.md`](./I18N.md).
 - **Tóm tắt:** mọi copy user-facing nằm trong `messages/*.json` (`vi`, `en`, `id`, `th`, `ms`) — **cùng key** mọi file.
-- **Điều hướng nội bộ:** `import { Link, useRouter, usePathname } from '@/i18n/navigation'` — không dùng `next/link` cho route trong app (tránh mất locale).
-- **Đổi ngôn ngữ:** `LocaleSwitcher` (`router.replace(pathname, { locale })`); không tự nối chuỗi `/en` trên URL.
+- **Điều hướng nội bộ:** `import { Link, useRouter, usePathname } from '@/i18n/navigation'` — không dùng `next/link` cho route trong app (tránh mất locale). Khi cần UI **pending** sau khi bấm link (spinner / dim), dùng **`NavLink`** từ `@/components/navigation/nav-link` (bọc `Link` next-intl + `useLinkStatus` từ `next/link`).
+- **Đổi ngôn ngữ:** `LocaleSwitcher` (`router.replace(pathname, { locale })` trong `useTransition`); không tự nối chuỗi `/en` trên URL. Chuỗi **`LocaleSwitcher.switching`** trong `messages/*.json` cho trạng thái đang đổi locale.
 - **Component server:** `await getTranslations('Namespace')`; **client:** `useTranslations('Namespace')`.
 - **Giá trị gửi API / log:** tách biệt khỏi chuỗi UI; map locale → tham số kỹ thuật (ví dụ ASR `language`) ở một chỗ (page hoặc helper).
 
@@ -32,7 +34,8 @@
 
 - **`tailwind.config.ts` → `content`:** phải gồm `src/features/**` (ví dụ landing) — nếu thiếu, mọi utility trong feature không được build và UI trông “vỡ” hoàn toàn.
 - Gom class xung đột qua `cn()` từ `@/lib/utils`.
-- Nút: dùng `Button` hoặc `buttonClassName()` khi cần `<Link>` trông như nút (tránh lồng `<button><a>`). Với Link nội bộ, dùng `Link` từ `@/i18n/navigation`.
+- Animation thanh tải khi điều hướng: keyframe **`route-bar`** trong `tailwind.config.ts` (dùng bởi `RouteTransitionProgress`).
+- Nút: dùng **`Button`** (có **`loading`**) hoặc `buttonClassName()` khi cần `<Link>` trông như nút (tránh lồng `<button><a>`). Với link nội bộ: **`Link`** hoặc **`NavLink`** từ `@/i18n/navigation` / `@/components/navigation/nav-link`.
 
 ## Cấu trúc component
 
