@@ -604,7 +604,7 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
               <Button
                 type="button"
                 variant={neo ? "ghost" : "primary"}
-                onClick={start}
+                onClick={() => start()}
                 className={cn(
                   neo &&
                     "neo-btn neo-btn--mint px-6 py-3 text-sm font-extrabold sm:px-8",
