@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Note Taker - 5 Minute Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Nunito:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --neo-ink: #1e293b;
+        --neo-cream: #fdf8f3;
+        --surface: #ffffff;
+        --muted: #e8f0fe;
+        --muted-fg: #475569;
+        --accent: #059669;
+        --mint: #4ade80;
+        --sky: #7dd3fc;
+        --lilac: #c4b5fd;
+        --coral: #fda4af;
+        --butter: #fcd34d;
+        --raised: #1e293b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+        color: #0f172a;
+      }
+
+      body {
+        background:
+          radial-gradient(120% 85% at 0% 0%, rgba(125, 211, 252, 0.45) 0%, transparent 50%),
+          radial-gradient(90% 70% at 100% 10%, rgba(253, 164, 175, 0.35) 0%, transparent 45%),
+          radial-gradient(80% 50% at 50% 100%, rgba(196, 181, 253, 0.28) 0%, transparent 50%),
+          linear-gradient(180deg, #fdf8f3 0%, #f8fafc 55%, #e0f2fe 100%);
+        overflow: hidden;
+      }
+
+      .deck {
+        position: relative;
+        height: 100vh;
+        width: 100vw;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: clamp(1.2rem, 3vw, 2.4rem);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 1rem;
+        opacity: 0;
+        transform: translateX(28px);
+        pointer-events: none;
+        transition: opacity 260ms ease, transform 260ms ease;
+      }
+
+      .slide.active {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+      }
+
+      .slide--hero {
+        overflow: hidden;
+      }
+
+      .slide--hero .topbar,
+      .slide--hero .card,
+      .slide--hero .footer {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-blob {
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(0.5px);
+        opacity: 0.45;
+        z-index: 1;
+        animation: heroFloat 8s ease-in-out infinite;
+      }
+
+      .hero-blob--one {
+        width: clamp(180px, 28vw, 360px);
+        height: clamp(180px, 28vw, 360px);
+        top: 9%;
+        left: -5%;
+        background: radial-gradient(circle at 30% 30%, rgba(125, 211, 252, 0.8), rgba(125, 211, 252, 0.22));
+      }
+
+      .hero-blob--two {
+        width: clamp(170px, 24vw, 300px);
+        height: clamp(170px, 24vw, 300px);
+        right: -4%;
+        bottom: 13%;
+        background: radial-gradient(circle at 60% 40%, rgba(196, 181, 253, 0.9), rgba(196, 181, 253, 0.2));
+        animation-delay: 1.2s;
+      }
+
+      .hero-blob--three {
+        width: clamp(120px, 18vw, 240px);
+        height: clamp(120px, 18vw, 240px);
+        right: 16%;
+        top: 12%;
+        background: radial-gradient(circle at 45% 45%, rgba(253, 164, 175, 0.8), rgba(253, 164, 175, 0.16));
+        animation-delay: 2.3s;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .badge {
+        border: 2px solid var(--neo-ink);
+        border-radius: 999px;
+        background: var(--sky);
+        box-shadow: 4px 4px 0 0 var(--raised);
+        font-weight: 900;
+        padding: 0.3rem 0.8rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+      }
+
+      .counter {
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: var(--muted-fg);
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .card {
+        border: 2px solid var(--neo-ink);
+        border-radius: 1.2rem;
+        background: var(--surface);
+        box-shadow: 8px 8px 0 0 var(--raised);
+        padding: clamp(1rem, 2.5vw, 2rem);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .slide--hero .card {
+        background:
+          linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(248, 252, 255, 0.9)),
+          var(--surface);
+        box-shadow:
+          10px 10px 0 0 var(--raised),
+          0 18px 35px -18px rgba(30, 41, 59, 0.45);
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 4rem);
+      }
+
+      .hero-title {
+        background: linear-gradient(90deg, #0f172a 0%, #0b4c70 38%, #0f766e 68%, #0f172a 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-wrap: balance;
+        animation: heroTitleIn 540ms ease-out both;
+      }
+
+      .hero-subtitle {
+        max-width: 42rem;
+        margin: 0.7rem auto 0;
+        color: #334155;
+        font-weight: 700;
+        animation: heroFadeUp 600ms ease-out both;
+        animation-delay: 120ms;
+      }
+
+      h2 {
+        font-size: clamp(1.4rem, 3.2vw, 2.4rem);
+      }
+
+      p,
+      li {
+        font-size: clamp(0.98rem, 1.8vw, 1.18rem);
+        line-height: 1.6;
+      }
+
+      ul {
+        margin: 0.5rem 0 0;
+        padding-left: 0;
+        list-style-position: inside;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        width: 100%;
+      }
+
+      .kpi {
+        border: 2px solid var(--neo-ink);
+        border-radius: 1rem;
+        background: var(--muted);
+        box-shadow: 5px 5px 0 0 var(--raised);
+        padding: 0.9rem 1rem;
+      }
+
+      .kpi b {
+        display: block;
+        font-size: 1.4rem;
+        margin-bottom: 0.2rem;
+      }
+
+      .problem-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin-top: 0.95rem;
+      }
+
+      .problem-item {
+        border: 2px solid var(--neo-ink);
+        border-radius: 1rem;
+        background: var(--surface);
+        box-shadow: 5px 5px 0 0 var(--raised);
+        padding: 0.8rem 0.85rem;
+        text-align: left;
+      }
+
+      .problem-head {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-weight: 900;
+        font-size: 0.95rem;
+      }
+
+      .problem-head svg {
+        width: 1rem;
+        height: 1rem;
+        flex-shrink: 0;
+      }
+
+      .problem-item p {
+        margin: 0.45rem 0 0;
+        font-size: 0.92rem;
+        color: var(--muted-fg);
+      }
+
+      .callout {
+        border-left: 6px solid var(--neo-ink);
+        background: color-mix(in srgb, var(--mint) 28%, white);
+        padding: 0.8rem 1rem;
+        border-radius: 0.75rem;
+        font-weight: 700;
+        width: min(100%, 62rem);
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: var(--muted-fg);
+      }
+
+      .controls {
+        display: inline-flex;
+        gap: 0.5rem;
+      }
+
+      button {
+        cursor: pointer;
+        border: 2px solid var(--neo-ink);
+        border-radius: 0.75rem;
+        background: var(--surface);
+        padding: 0.45rem 0.8rem;
+        font-weight: 800;
+        box-shadow: 3px 3px 0 0 var(--raised);
+      }
+
+      button:active {
+        transform: translate(1px, 1px);
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.6rem;
+        width: 100%;
+      }
+
+      .step {
+        border: 2px solid var(--neo-ink);
+        border-radius: 0.8rem;
+        background: var(--surface);
+        padding: 0.7rem;
+        box-shadow: 4px 4px 0 0 var(--raised);
+      }
+
+      .step b {
+        font-size: 0.86rem;
+      }
+
+      .step span {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.82rem;
+        color: var(--muted-fg);
+      }
+
+      .solution-layout {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 1rem;
+        margin-top: 0.9rem;
+        text-align: left;
+      }
+
+      .solution-copy {
+        border: 2px solid var(--neo-ink);
+        border-radius: 1rem;
+        background: var(--surface);
+        box-shadow: 5px 5px 0 0 var(--raised);
+        padding: 0.9rem;
+      }
+
+      .solution-copy h3 {
+        margin: 0 0 0.4rem;
+        font-size: 1.05rem;
+      }
+
+      .bridge-note {
+        width: min(100%, 62rem);
+        border: 2px dashed var(--neo-ink);
+        border-radius: 0.9rem;
+        background: color-mix(in srgb, var(--sky) 24%, white);
+        padding: 0.55rem 0.8rem;
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: #0f3f5a;
+        margin-top: 0.65rem;
+      }
+
+      .solution-copy ul {
+        margin: 0;
+        list-style-position: outside;
+        padding-left: 1.05rem;
+      }
+
+      .solution-copy li {
+        font-size: 0.92rem;
+        color: #334155;
+        margin-bottom: 0.35rem;
+      }
+
+      .mock-ui {
+        border: 2px solid var(--neo-ink);
+        border-radius: 1rem;
+        background: var(--surface);
+        box-shadow: 6px 6px 0 0 var(--raised);
+        padding: 0.7rem;
+      }
+
+      .mock-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: var(--muted-fg);
+        margin-bottom: 0.55rem;
+      }
+
+      .mock-dot {
+        width: 0.55rem;
+        height: 0.55rem;
+        border-radius: 999px;
+        border: 1px solid var(--neo-ink);
+        background: var(--coral);
+        display: inline-block;
+        margin-right: 0.2rem;
+      }
+
+      .mock-box {
+        border: 2px solid var(--neo-ink);
+        border-radius: 0.75rem;
+        padding: 0.55rem;
+        background: color-mix(in srgb, var(--muted) 58%, white);
+        font-size: 0.82rem;
+        margin-bottom: 0.45rem;
+      }
+
+      .mock-pill {
+        display: inline-flex;
+        align-items: center;
+        border: 2px solid var(--neo-ink);
+        border-radius: 999px;
+        padding: 0.22rem 0.55rem;
+        font-size: 0.75rem;
+        font-weight: 900;
+        background: var(--mint);
+        margin-right: 0.35rem;
+      }
+
+      .mock-progress {
+        border: 2px solid var(--neo-ink);
+        border-radius: 999px;
+        height: 0.72rem;
+        background: var(--muted);
+        overflow: hidden;
+        margin-top: 0.45rem;
+      }
+
+      .mock-progress > span {
+        display: block;
+        height: 100%;
+        border-right: 2px solid var(--neo-ink);
+        background: var(--mint);
+      }
+
+      .stack {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.7rem;
+        margin-top: 0.9rem;
+      }
+
+      .chip {
+        border: 2px solid var(--neo-ink);
+        border-radius: 999px;
+        background: var(--surface);
+        box-shadow: 4px 4px 0 0 var(--raised);
+        padding: 0.45rem 0.75rem;
+        font-weight: 800;
+        font-size: 0.9rem;
+        animation: heroFadeUp 500ms ease-out both;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+      }
+
+      .chip svg {
+        width: 0.95rem;
+        height: 0.95rem;
+        flex-shrink: 0;
+      }
+
+      .hero-icons {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-top: 0.15rem;
+        animation: heroFadeUp 520ms ease-out both;
+        animation-delay: 90ms;
+      }
+
+      .hero-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.72rem;
+        border: 2px solid var(--neo-ink);
+        background: var(--surface);
+        box-shadow: 3px 3px 0 0 var(--raised);
+      }
+
+      .hero-icon svg {
+        width: 1.15rem;
+        height: 1.15rem;
+      }
+
+      .chip:nth-child(1) {
+        animation-delay: 120ms;
+      }
+      .chip:nth-child(2) {
+        animation-delay: 180ms;
+      }
+      .chip:nth-child(3) {
+        animation-delay: 240ms;
+      }
+      .chip:nth-child(4) {
+        animation-delay: 300ms;
+      }
+      .chip:nth-child(5) {
+        animation-delay: 360ms;
+      }
+      .chip:nth-child(6) {
+        animation-delay: 420ms;
+      }
+
+      .hero-kicker {
+        margin-top: 0.2rem;
+        border: 2px solid var(--neo-ink);
+        border-radius: 999px;
+        background: var(--mint);
+        box-shadow: 4px 4px 0 0 var(--raised);
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        padding: 0.35rem 0.8rem;
+        animation: heroFadeUp 500ms ease-out both;
+      }
+
+      @keyframes heroFadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes heroTitleIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes heroFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-11px);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .grid-2,
+        .timeline,
+        .stack,
+        .problem-grid,
+        .solution-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hero-blob,
+        .hero-title,
+        .hero-subtitle,
+        .hero-kicker,
+        .chip {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck" id="deck">
+      <section class="slide slide--hero active">
+        <span class="hero-blob hero-blob--one" aria-hidden="true"></span>
+        <span class="hero-blob hero-blob--two" aria-hidden="true"></span>
+        <span class="hero-blob hero-blob--three" aria-hidden="true"></span>
+        <div class="topbar">
+          <span class="badge">Live Note Taker</span>
+          <span class="counter">Slide 1 / 7</span>
+        </div>
+        <article class="card">
+          <span class="hero-kicker">Realtime notes for learning</span>
+          <h1 class="hero-title">Live Note Taker</h1>
+          <div class="hero-icons" aria-hidden="true">
+            <span class="hero-icon" style="background: var(--sky)">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z" stroke="currentColor" stroke-width="1.8" />
+                <path d="M8 11v1a4 4 0 008 0v-1M12 18v3M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span class="hero-icon" style="background: var(--mint)">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 12c2-4 4 4 6 0s4 4 6 0 4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span class="hero-icon" style="background: var(--lilac)">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 5a2 2 0 012-2h10v16H7a2 2 0 00-2 2V5zM5 19a2 2 0 012-2h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+          <p class="hero-subtitle">
+            A realtime note-taking app for classes and meetings:
+            speak naturally, see transcript instantly, and save organized notes.
+          </p>
+          <h2 style="margin-top: 0.2rem">Built with</h2>
+          <div class="stack">
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 4l8 14H4L12 4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /></svg>
+              Next.js 16 + React 19
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M8 8h8M8 12h6M8 16h5M5 5h14v14H5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+              TypeScript + Tailwind CSS
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 12c2-4 4 4 6 0s4 4 6 0 4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+              VALSEA RTT + REST APIs
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="6.5" rx="6.5" ry="2.5" stroke="currentColor" stroke-width="1.8" /><path d="M5.5 6.5v8c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5v-8" stroke="currentColor" stroke-width="1.8" /></svg>
+              Supabase Auth + PostgreSQL
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /><path d="M16 15l4 4M20 15l-4 4" stroke="currentColor" stroke-width="1.8" /></svg>
+              next-intl + next-themes
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 4v5c0 4.2-2.8 7.5-7 9-4.2-1.5-7-4.8-7-9V7l7-4z" stroke="currentColor" stroke-width="1.8" /><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+              Vercel deployment
+            </span>
+          </div>
+          <p class="callout">
+            End-to-end working build, not a concept mockup.
+          </p>
+        </article>
+        <div class="footer">
+          <span>Intro -> Problem -> Working demo -> Impact -> Next steps</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--coral)">Real problem</span>
+          <span class="counter">Slide 2 / 7</span>
+        </div>
+        <article class="card">
+          <h2>Why note-taking fails in live classes</h2>
+          <p style="max-width: 58rem; margin-top: 0.6rem">
+            In live classes and conference talks, note-taking is an attention trade-off:
+            <b>listen now</b> or <b>Taking notes now</b>.
+          </p>
+          <div class="problem-grid">
+            <div class="problem-item">
+              <span class="problem-head">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M4 12h16M12 4v16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                Cognitive split
+              </span>
+              <p>You cannot deeply listen and write full notes at the same time.</p>
+            </div>
+            <div class="problem-item">
+              <span class="problem-head">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 5v7l4 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                Speed mismatch
+              </span>
+              <p>Speakers move fast; your notes lag and lose key context.</p>
+            </div>
+            <div class="problem-item">
+              <span class="problem-head">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M4 12c2-4 4 4 6 0s4 4 6 0 4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                English complexity
+              </span>
+              <p>Accents + technical terms + complex concepts increase processing load.</p>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top: 1rem">
+            <div class="kpi"><b>Current state</b> high attention cost during class, low quality notes after class</div>
+            <div class="kpi"><b>Opportunity</b> capture first in realtime, structure second when the lecture ends</div>
+          </div>
+          <p class="callout" style="margin-top: 1rem">
+            This is not only a productivity issue - it is a learning quality issue.
+          </p>
+        </article>
+        <div class="footer">
+          <span>Bridge: "If attention is the bottleneck, the product must capture first and structure later."</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--lilac)">Built for real use</span>
+          <span class="counter">Slide 8 / 11</span>
+        </div>
+        <article class="card">
+          <h2>Technical proof it works</h2>
+          <div class="grid-2" style="margin-top: 0.8rem">
+            <div class="kpi">
+              <b>Frontend</b>
+              Next.js 16 + React 19 + TypeScript + Tailwind + i18n + dark mode.
+            </div>
+            <div class="kpi">
+              <b>Realtime + API</b>
+              WebSocket RTT proxy to VALSEA + REST routes for clarify/tools.
+            </div>
+            <div class="kpi">
+              <b>Data + Auth</b>
+              Supabase Auth (Google), PostgreSQL, per-user folders and sessions.
+            </div>
+            <div class="kpi">
+              <b>Quality</b>
+              Responsive UI, loading states, route feedback, and docs for deploy.
+            </div>
+          </div>
+        </article>
+        <div class="footer">
+          <span>Emphasize: "Not mockups - all critical paths are implemented."</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--butter)">Why it matters</span>
+          <span class="counter">Slide 9 / 11</span>
+        </div>
+        <article class="card">
+          <h2>Impact</h2>
+          <ul>
+            <li><b>Immediate (during class):</b> students keep attention on meaning while notes are captured automatically.</li>
+            <li><b>Short-term (after class):</b> teachers and learners get cleaner recap material in minutes, not hours.</li>
+            <li><b>Long-term (knowledge):</b> saved folders + editor tools turn one lecture into reusable study assets.</li>
+            <li><b>Market fit:</b> multilingual UI (vi, en, id, th, ms) lowers adoption friction across SEA classrooms.</li>
+          </ul>
+          <p class="callout">Core impact: reduce note-taking cognitive load now, then increase review quality later.</p>
+        </article>
+        <div class="footer">
+          <span>Narration tip: give one real user story + one measurable signal (time saved or recap quality).</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge">Roadmap</span>
+          <span class="counter">Slide 10 / 11</span>
+        </div>
+        <article class="card">
+          <h2>What is next after hackathon</h2>
+          <div class="grid-2" style="margin-top: 0.8rem">
+            <div class="kpi"><b>Near-term</b> auto summaries, action items, markdown export.</div>
+            <div class="kpi"><b>Quality</b> automated tests + better observability for live errors.</div>
+            <div class="kpi"><b>Product</b> shareable notes and collaboration permissions.</div>
+            <div class="kpi"><b>Scale</b> production WSS proxy, usage analytics, billing-ready plans.</div>
+          </div>
+        </article>
+        <div class="footer">
+          <span>Signal to judges that this can continue beyond demo day.</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--mint)">Final message</span>
+          <span class="counter">Slide 11 / 11</span>
+        </div>
+        <article class="card">
+          <h1>Built. Working. Useful.</h1>
+          <p>
+            We identified a real learning problem, shipped a working realtime solution,
+            and proved clear value in 5 minutes.
+          </p>
+          <p class="callout">
+            Live Note Taker turns spoken sessions into structured, saved knowledge.
+          </p>
+          <p><b>Thank you — ready for live demo + Q&A.</b></p>
+        </article>
+        <div class="footer">
+          <span>Tip: end with app open on /live before Q&A starts.</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--mint)">Working solution I</span>
+          <span class="counter">Slide 3 / 11</span>
+        </div>
+        <article class="card">
+          <h2>Step 1 - Start live session fast</h2>
+          <p class="bridge-note">
+            From problem -> solution: we remove typing pressure at minute 0, so users can keep listening while the app captures.
+          </p>
+          <div class="solution-layout">
+            <div class="solution-copy">
+              <h3>What user does</h3>
+              <ul>
+                <li>Open the `Live` page and choose recognition language.</li>
+                <li>One tap on <b>Start</b> creates a real streaming session.</li>
+                <li>Clear status text reduces fear: connecting, ready, recording.</li>
+              </ul>
+            </div>
+            <div class="mock-ui">
+              <div class="mock-head"><span><i class="mock-dot"></i>/live</span><span>Ready</span></div>
+              <div class="mock-box">
+                <b>ASR language</b><br />
+                English ▼
+              </div>
+              <div class="mock-box"><span class="mock-pill">Start</span><span class="mock-pill" style="background: var(--sky)">Mic access</span></div>
+              <div class="mock-box">Status: engine connected, waiting audio...</div>
+            </div>
+          </div>
+        </article>
+        <div class="footer">
+          <span>Narration: "Low-friction start is critical in real classrooms."</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--mint)">Working solution II</span>
+          <span class="counter">Slide 4 / 11</span>
+        </div>
+        <article class="card">
+          <h2>Step 2 - Partial + final transcript stream</h2>
+          <div class="solution-layout">
+            <div class="solution-copy">
+              <h3>What user gets in real time</h3>
+              <ul>
+                <li><b>Partial text</b> appears first to preserve flow.</li>
+                <li><b>Final text</b> stabilizes sentence quality moments later.</li>
+                <li>User follows meaning without pausing the speaker.</li>
+              </ul>
+            </div>
+            <div class="mock-ui">
+              <div class="mock-head"><span><i class="mock-dot"></i>Transcript panel</span><span>Streaming</span></div>
+              <div class="mock-box"><b>Final:</b> "Market structure shifts when rates stay high..."</div>
+              <div class="mock-box"><b>Partial:</b> "and this causes cap..."</div>
+              <div class="mock-progress"><span style="width: 72%"></span></div>
+            </div>
+          </div>
+        </article>
+        <div class="footer">
+          <span>Narration: "We optimize for comprehension now, polishing seconds later."</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--mint)">Working solution III</span>
+          <span class="counter">Slide 5 / 11</span>
+        </div>
+        <article class="card">
+          <h2>Step 3 - Post-session actions in one place</h2>
+          <div class="solution-layout">
+            <div class="solution-copy">
+              <h3>From raw text to usable output</h3>
+              <ul>
+                <li>Copy fast for chat/class group sharing.</li>
+                <li>Download `.txt` for offline review.</li>
+                <li>Clarify improves readability before saving.</li>
+              </ul>
+            </div>
+            <div class="mock-ui">
+              <div class="mock-head"><span><i class="mock-dot"></i>Quick actions</span><span>After class</span></div>
+              <div class="mock-box">
+                <span class="mock-pill">Copy</span>
+                <span class="mock-pill" style="background: var(--sky)">Download</span>
+                <span class="mock-pill" style="background: var(--lilac)">Clarify</span>
+              </div>
+              <div class="mock-box">"Key points cleaned and ready to save."</div>
+            </div>
+          </div>
+        </article>
+        <div class="footer">
+          <span>Narration: "No context switch to another tool right after class."</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--mint)">Working solution IV</span>
+          <span class="counter">Slide 6 / 11</span>
+        </div>
+        <article class="card">
+          <h2>Step 4 - Save into private workspace</h2>
+          <div class="solution-layout">
+            <div class="solution-copy">
+              <h3>Security + organization together</h3>
+              <ul>
+                <li>Google sign-in for low onboarding friction.</li>
+                <li>Save note with title + folder in a modal flow.</li>
+                <li>Supabase RLS keeps each user's data isolated.</li>
+              </ul>
+            </div>
+            <div class="mock-ui">
+              <div class="mock-head"><span><i class="mock-dot"></i>Save note dialog</span><span>Secure</span></div>
+              <div class="mock-box"><b>Title</b>: Week 4 - Macro economics summary</div>
+              <div class="mock-box"><b>Folder</b>: ECON101 / Midterm prep</div>
+              <div class="mock-box"><span class="mock-pill" style="background: var(--mint)">Save note</span></div>
+            </div>
+          </div>
+        </article>
+        <div class="footer">
+          <span>Narration: "Live capture becomes durable knowledge, not temporary text."</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar">
+          <span class="badge" style="background: var(--mint)">Working solution V</span>
+          <span class="counter">Slide 7 / 11</span>
+        </div>
+        <article class="card">
+          <h2>Step 5 - Reuse and refine in editor</h2>
+          <div class="solution-layout">
+            <div class="solution-copy">
+              <h3>Value after the event</h3>
+              <ul>
+                <li>Open saved note and continue editing.</li>
+                <li>Apply AI tools (translate / format / sentiment) when enabled.</li>
+                <li>Build long-term personal knowledge by folder.</li>
+              </ul>
+            </div>
+            <div class="mock-ui">
+              <div class="mock-head"><span><i class="mock-dot"></i>/profile/notes/abc123</span><span>Editor</span></div>
+              <div class="mock-box"><b>Toolbar</b>: Translate · Format · Annotate · Sentiment</div>
+              <div class="mock-box">"Action items: 1) Review chapter 6  2) Discuss with team..."</div>
+              <div class="mock-box"><span class="mock-pill" style="background: var(--butter)">Saved</span></div>
+            </div>
+          </div>
+        </article>
+        <div class="footer">
+          <span>Narration: "The product is not just transcription, it is learning memory."</span>
+          <div class="controls">
+            <button data-prev>Prev</button><button data-next>Next</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      let idx = 0;
+
+      function render() {
+        slides.forEach((slide, i) => slide.classList.toggle("active", i === idx));
+        const counters = document.querySelectorAll(".counter");
+        counters.forEach((counter, i) => {
+          counter.textContent = `Slide ${i + 1} / ${slides.length}`;
+        });
+      }
+
+      function next() {
+        idx = Math.min(slides.length - 1, idx + 1);
+        render();
+      }
+
+      function prev() {
+        idx = Math.max(0, idx - 1);
+        render();
+      }
+
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (target.hasAttribute("data-next")) next();
+        if (target.hasAttribute("data-prev")) prev();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") next();
+        if (event.key === "ArrowLeft" || event.key === "PageUp") prev();
+      });
+
+      render();
+    </script>
+  </body>
+</html>

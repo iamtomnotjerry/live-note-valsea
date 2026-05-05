@@ -23,6 +23,15 @@ type RttServerMessage = {
   code?: string;
 };
 
+type AudioInputOption = {
+  deviceId: string;
+  label: string;
+};
+
+type StartOptions = {
+  preserveTranscript?: boolean;
+};
+
 type Props = {
   className?: string;
   /** Neo-clay landing look (parent needs `data-landing="true"`). */
@@ -35,6 +44,8 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
   const pathname = usePathname();
   const locale = useLocale();
   const [asrLanguage, setAsrLanguage] = useState("vietnamese");
+  const [audioInputs, setAudioInputs] = useState<AudioInputOption[]>([]);
+  const [selectedMicId, setSelectedMicId] = useState("");
   const [running, setRunning] = useState(false);
   const [finalSegments, setFinalSegments] = useState<string[]>([]);
   const [currentPartial, setCurrentPartial] = useState("");
@@ -50,6 +61,8 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
   const [hasUserSession, setHasUserSession] = useState(false);
 
   const wsRef = useRef<WebSocket | null>(null);
+  const startRef = useRef<(options?: StartOptions) => void>(() => {});
+  const reconnectOnCloseRef = useRef(false);
   const sessionReadyRef = useRef(false);
   const intentionalCloseRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -70,6 +83,7 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
   }, []);
 
   const stopAll = useCallback(() => {
+    reconnectOnCloseRef.current = false;
     stopAudio();
     const ws = wsRef.current;
     wsRef.current = null;
@@ -90,6 +104,32 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
     setRunning(false);
     setStatus(t("statusStopped"));
   }, [stopAudio, t]);
+
+  const refreshAudioInputs = useCallback(async () => {
+    if (!navigator.mediaDevices?.enumerateDevices) return;
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const inputs: AudioInputOption[] = devices
+        .filter((device) => device.kind === "audioinput")
+        .map((device, idx) => ({
+          deviceId: device.deviceId,
+          label:
+            device.label.trim() || `${t("micInputFallbackLabel")} ${idx + 1}`,
+        }));
+      setAudioInputs(inputs);
+      setSelectedMicId((prev) => {
+        if (prev && inputs.some((input) => input.deviceId === prev)) {
+          return prev;
+        }
+        const preferred =
+          inputs.find((input) => input.deviceId === "default") ?? inputs[0];
+        return preferred?.deviceId ?? "";
+      });
+    } catch {
+      setAudioInputs([]);
+      setSelectedMicId("");
+    }
+  }, [t]);
 
   const appendFinal = useCallback((text: string) => {
     const seg = text.trim();
@@ -124,6 +164,45 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
     setSaveDialogTranscript(text);
     setSaveDialogOpen(true);
   }, [buildTranscriptExport]);
+
+  useEffect(() => {
+    const refreshTimer = window.setTimeout(() => {
+      void refreshAudioInputs();
+    }, 0);
+    if (!navigator.mediaDevices?.addEventListener) return;
+    const onDeviceChange = () => {
+      void refreshAudioInputs();
+      if (!wsRef.current) return;
+      setError(null);
+      setStatus(t("statusDeviceChanged"));
+      reconnectOnCloseRef.current = true;
+      const ws = wsRef.current;
+      if (!ws) return;
+      try {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "audio.commit" }));
+        }
+      } catch {
+        /* ignore */
+      }
+      try {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "session.stop" }));
+        }
+      } catch {
+        /* ignore */
+      }
+      ws.close(1000, "device_change");
+    };
+    navigator.mediaDevices.addEventListener("devicechange", onDeviceChange);
+    return () => {
+      window.clearTimeout(refreshTimer);
+      navigator.mediaDevices.removeEventListener(
+        "devicechange",
+        onDeviceChange,
+      );
+    };
+  }, [refreshAudioInputs, t]);
 
   useEffect(() => {
     let cancelled = false;
@@ -226,11 +305,27 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
       if (!navigator.mediaDevices?.getUserMedia) {
         throw new Error(t("errNoGetUserMedia"));
       }
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true },
-        video: false,
-      });
+      const baseAudioConstraints = {
+        echoCancellation: true,
+        noiseSuppression: true,
+      } satisfies MediaTrackConstraints;
+      const selectedConstraints = selectedMicId
+        ? { ...baseAudioConstraints, deviceId: { exact: selectedMicId } }
+        : baseAudioConstraints;
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: selectedConstraints,
+          video: false,
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: baseAudioConstraints,
+          video: false,
+        });
+      }
       streamRef.current = stream;
+      await refreshAudioInputs();
 
       const ctx = new AudioContext();
       audioContextRef.current = ctx;
@@ -268,7 +363,7 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
       mute.connect(ctx.destination);
       setStatus(t("statusRecording"));
     },
-    [t],
+    [refreshAudioInputs, selectedMicId, t],
   );
 
   const handleServerMessage = useCallback(
@@ -321,44 +416,62 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
     [appendFinal, asrLanguage, startAudioGraph, stopAll, t],
   );
 
-  const start = useCallback(() => {
-    setError(null);
-    setFinalSegments([]);
-    setCurrentPartial("");
-    setStatus(t("statusConnecting"));
-    sessionReadyRef.current = false;
-    intentionalCloseRef.current = false;
-
-    const ws = new WebSocket(DEFAULT_PROXY_WS);
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      setStatus(t("statusWsOpen"));
-      setRunning(true);
-    };
-
-    ws.onmessage = (ev) => {
-      void handleServerMessage(String(ev.data), ws);
-    };
-
-    ws.onerror = () => {
-      setError(t("errWs"));
-      stopAudio();
-      wsRef.current = null;
-      setRunning(false);
-    };
-
-    ws.onclose = () => {
-      stopAudio();
-      wsRef.current = null;
-      setRunning(false);
-      if (intentionalCloseRef.current) {
-        intentionalCloseRef.current = false;
-        return;
+  const start = useCallback(
+    (options?: StartOptions) => {
+      setError(null);
+      if (!options?.preserveTranscript) {
+        setFinalSegments([]);
+        setCurrentPartial("");
       }
-      setStatus(t("statusDisconnected"));
-    };
-  }, [handleServerMessage, stopAudio, t]);
+      setStatus(t("statusConnecting"));
+      sessionReadyRef.current = false;
+      intentionalCloseRef.current = false;
+      reconnectOnCloseRef.current = false;
+
+      const ws = new WebSocket(DEFAULT_PROXY_WS);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        setStatus(t("statusWsOpen"));
+        setRunning(true);
+      };
+
+      ws.onmessage = (ev) => {
+        void handleServerMessage(String(ev.data), ws);
+      };
+
+      ws.onerror = () => {
+        setError(t("errWs"));
+        stopAudio();
+        wsRef.current = null;
+        setRunning(false);
+      };
+
+      ws.onclose = () => {
+        stopAudio();
+        wsRef.current = null;
+        setRunning(false);
+        if (reconnectOnCloseRef.current) {
+          reconnectOnCloseRef.current = false;
+          setStatus(t("statusReconnecting"));
+          window.setTimeout(() => {
+            startRef.current({ preserveTranscript: true });
+          }, 120);
+          return;
+        }
+        if (intentionalCloseRef.current) {
+          intentionalCloseRef.current = false;
+          return;
+        }
+        setStatus(t("statusDisconnected"));
+      };
+    },
+    [handleServerMessage, stopAudio, t],
+  );
+
+  useEffect(() => {
+    startRef.current = start;
+  }, [start]);
 
   useEffect(() => {
     return () => {
@@ -448,6 +561,42 @@ export function LiveRttPanel({ className, tone = "default" }: Props) {
             </select>
             <p className="text-xs text-[var(--muted-fg)]">
               {t("asrLanguageHint")}
+            </p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              className={cn(
+                "text-xs font-medium text-[var(--muted-fg)]",
+                neo &&
+                  "font-extrabold uppercase tracking-wide text-[var(--foreground)]",
+              )}
+              htmlFor="valsea-rtt-mic"
+            >
+              {t("micInput")}
+            </label>
+            <select
+              id="valsea-rtt-mic"
+              className={cn(
+                "max-w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm text-[var(--foreground)] shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-60",
+                neo &&
+                  "rounded-xl border-2 border-[var(--neo-ink)] bg-[var(--surface)] font-medium shadow-[4px_4px_0_0_var(--neo-raised)]",
+              )}
+              value={selectedMicId}
+              disabled={running || audioInputs.length === 0}
+              onChange={(e) => setSelectedMicId(e.target.value)}
+            >
+              {audioInputs.length ? (
+                audioInputs.map((input) => (
+                  <option key={input.deviceId} value={input.deviceId}>
+                    {input.label}
+                  </option>
+                ))
+              ) : (
+                <option value="">{t("micInputUnavailable")}</option>
+              )}
+            </select>
+            <p className="text-xs text-[var(--muted-fg)]">
+              {t("micInputHint")}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
