@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { NavLink } from "@/components/navigation/nav-link";
 import { LiveAppNavLink } from "@/features/live-note/live-app-nav-link";
 import { cn } from "@/lib/utils";
 
@@ -278,13 +279,10 @@ export async function HomeLanding() {
               className="flex flex-wrap gap-3 motion-safe:animate-landing-fade-up motion-reduce:animate-none"
               style={{ animationDelay: "360ms" }}
             >
-              <LiveAppNavLink
-                className="neo-btn neo-btn--sky"
-                href="/interview"
-              >
+              <NavLink className="neo-btn neo-btn--sky" href="/interview">
                 {t("ctaInterview")}
                 <span aria-hidden>→</span>
-              </LiveAppNavLink>
+              </NavLink>
               <LiveAppNavLink className="neo-btn neo-btn--mint" href="/live">
                 {t("ctaLive")}
                 <span aria-hidden>→</span>
@@ -610,13 +608,13 @@ export async function HomeLanding() {
             {t("closingSub")}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <LiveAppNavLink
+            <NavLink
               className="neo-btn neo-btn--sky px-8 py-4"
               href="/interview"
             >
               {t("closingInterviewCta")}
               <span aria-hidden>→</span>
-            </LiveAppNavLink>
+            </NavLink>
             <LiveAppNavLink
               className="neo-btn neo-btn--mint px-8 py-4"
               href="/live"
