@@ -13,6 +13,7 @@ export function ProfileNav() {
   const onNotes =
     pathname === "/profile/notes" || pathname.startsWith("/profile/notes/");
   const onAccount = pathname === "/profile/account";
+  const onInterview = pathname === "/interview";
 
   const linkClass = (active: boolean) =>
     cn(
@@ -32,6 +33,9 @@ export function ProfileNav() {
       </NavLink>
       <NavLink href="/profile/account" className={linkClass(onAccount)}>
         {t("navAccount")}
+      </NavLink>
+      <NavLink href="/interview" className={linkClass(onInterview)}>
+        {t("navInterview")}
       </NavLink>
       <NavLink
         href="/live"
